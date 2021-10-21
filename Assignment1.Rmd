@@ -2,11 +2,43 @@
 title: "Assignment 1"
 author: "Madeleine Levin, Jaida Nabayan, Michael Zajakowski Uhll"
 date: "10/21/2021"
-output: html_document
+output:
+   html_document:
+     theme: readable
+     toc: true
+     toc_depth: 3
+     toc_float: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Research question
+
+What is the relationship between the presence of open space in neighborhoods of various U.S. cities and the number of people arrested during protests against police brutality in summer 2020? 
+
+# Prior research
+
+# Data
+
+*
+
+*
+
+
+## Load data
+
+```{r, message=FALSE}
+library(tidyverse)
+library(tidycensus)
+library(readxl)
+library(knitr)
+```
+
+Bringing in New York Data
+```{r, message=FALSE, results='hide'}
+nyc_arrest <-read_csv("https://data.cityofnewyork.us/api/views/8h9b-rp9u/rows.csv")
 ```
 
 
