@@ -1,0 +1,12 @@
+---
+title: "Assignment 1"
+author: "Madeleine Levin, Jaida Nabayan, Michael Zajakowski Uhll"
+date: "10/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
