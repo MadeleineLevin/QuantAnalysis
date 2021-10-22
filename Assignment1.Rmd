@@ -38,8 +38,8 @@ library(knitr)
 
 Bringing in New York Data
 ```{r, message=FALSE, results='hide'}
-nyc_arrest <-read_csv("https://data.cityofnewyork.us/api/views/8h9b-rp9u/rows.csv") %>%
-filter((ARREST_DATE >= as.Date("2020/05/25"))) %>% filter((ARREST_DATE <= as.Date("2020/08/31")))
+nyc_arrests <-read.csv("NYC_Arrests_Summer2020.csv")
+wifiparks <-read.csv("WiFiPublicSpace.csv")
 ```
 
 
