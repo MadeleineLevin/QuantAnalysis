@@ -16,9 +16,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Research question
 
-What is the relationship between the presence of open space in neighborhoods of various U.S. cities and the number of people arrested during protests against police brutality in summer 2020? 
+What is the relationship between the presence of open space and other amenities in NYC boroughs and the number of people arrested during protests against police brutality in summer 2020? 
 
 # Prior research
+
+
 
 # Data
 
