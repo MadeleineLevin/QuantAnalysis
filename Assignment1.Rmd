@@ -52,7 +52,8 @@ Bringing in Census Data
 ```{r}
 census2020 <-get_decennial(geography = "county",
                         year= 2020,
-                        variables =c(pop= "P1_001N"),
+                        variables =c(pop= "P1_001N",
+                                     race_pop = "P1_002N"),
                         output = "wide",
                         geometry = TRUE)
 ```
