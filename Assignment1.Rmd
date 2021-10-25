@@ -26,9 +26,11 @@ What is the relationship between the presence of open space and other amenities 
 
 The sample population for this study is the entire citizen population of New York City in the summer of 2020. The analysis includes the following variables:
 
-*
-*
-
+*NYC Arrests for Summer 2020
+*Location of Public Spaces in New York
+*NYC Borough Boundaries
+*NYPD Sector Boundaries
+*Libraries
 
 ## Load data
 
