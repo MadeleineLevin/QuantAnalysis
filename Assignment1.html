@@ -254,13 +254,22 @@ div.tocify {
 </div>
 <div id="prior-research" class="section level1">
 <h1>Prior research</h1>
+<p>While there is not a lot of quantitative research exploring the relationship between open space and protest in summer 2020, Rafail (2018) found that in NYC protests between 1960 and 2006, “the built environment, and the social relationships creating it, powerfully influence where dissent occurs.” Rafail finds that Privately Owned Public Spaces (POPs) are increasingly sites of gathering and protest, reflecting decentralization of public gathering spaces.Looking at the protests following George Floyd’s death in 2020, The US Crisis Monitor collected data on the political demonstrations that took place during from May - August 2020, with substantial focus on BLM protests throughout the United States. Their maps show the spatial concentration of protests in urban centers and that the majority of gatherings were protests and not riots.</p>
 </div>
 <div id="data" class="section level1">
 <h1>Data</h1>
+<p>The sample population for this study is the entire citizen population of New York City in the summer of 2020. The analysis includes the following variables:</p>
 <ul>
-<li></li>
-<li></li>
+<li>NYC Arrests for Summer 2020</li>
+<li>Location of Public Spaces in New York</li>
+<li>NYC Borough Boundaries</li>
+<li>NYPD Sector Boundaries</li>
+<li>Libraries</li>
+<li>Privately Owned Public Spaces (POPs)</li>
+<li>Census 2020 Population by County</li>
+<li>Census 2020 Race by County</li>
 </ul>
+<p>The arrest-level data needs to be filtered down further but currently represents 27,752 variable rows of arrests. We can use the spatial categories (lat, long) to compare it with the locations of amenities (Wifi in Parks, POPs, and Libraries) which represent 1,243 rows (638 Wifi locations, 388 POPs, and 216 Libraries).</p>
 <div id="load-data" class="section level2">
 <h2>Load data</h2>
 <pre class="r"><code>library(tidyverse)
@@ -268,9 +277,25 @@ library(tidycensus)
 library(readxl)
 library(knitr)</code></pre>
 <p>Bringing in New York Data</p>
-<pre class="r"><code>nyc_arrests &lt;-read.csv(&quot;NYC_Arrests_Summer2020.csv&quot;)
-wifiparks &lt;-read.csv(&quot;WiFiPublicSpace.csv&quot;)</code></pre>
+<pre class="r"><code>nyc_arrests &lt;-read.csv(file = &quot;data/NYC_Arrests_Summer2020.csv&quot;)
+wifiparks &lt;-read.csv(file =&quot;data/WiFiPublicSpace.csv&quot;)
+Boroughs &lt;- read.csv(file =&quot;data/NYCBoroughBoundaries.csv&quot;)
+NYPDSectors &lt;-read.csv(file = &quot;data/NYPD_Sectors.csv&quot;)
+library &lt;-read.csv(file = &quot;data/LIBRARY.csv&quot;)
+POPs &lt;-read.csv(file = &quot;data/POPS.csv&quot;)</code></pre>
+<p>Bringing in Census Data</p>
+<pre class="r"><code>census2020 &lt;-get_decennial(geography = &quot;county&quot;,
+                        year= 2020,
+                        variables =c(pop= &quot;P1_001N&quot;,
+                                     race_pop = &quot;P1_002N&quot;),
+                        output = &quot;wide&quot;,
+                        geometry = TRUE)</code></pre>
 </div>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+<p>Rafail, Patrick. “Protest in the City: Urban Spatial Restructuring and Dissent in New York, 1960–2006.” Urban Studies 55, no. 1 (January 2018): 244–60. <a href="https://doi.org/10.1177/0042098016661464" class="uri">https://doi.org/10.1177/0042098016661464</a>.</p>
+<p>Armed Conflict Location &amp; Event Data Project (ACLED), The US Crisis Monitor, 2020 <a href="https://acleddata.com/acleddatanew/wp-content/uploads/2020/09/ACLED_USDataReview_Sum2020_SeptWebPDF_HiRes.pdf" class="uri">https://acleddata.com/acleddatanew/wp-content/uploads/2020/09/ACLED_USDataReview_Sum2020_SeptWebPDF_HiRes.pdf</a></p>
 </div>
 
 

@@ -19,18 +19,23 @@ knitr::opts_chunk$set(echo = TRUE)
 What is the relationship between the presence of open space and other amenities in NYC boroughs and the number of people arrested during protests against police brutality in summer 2020? 
 
 # Prior research
-
-
+While there is not a lot of quantitative research exploring the relationship between open space and protest in summer 2020, Rafail (2018) found that in NYC protests between 1960 and 2006, "the built
+environment, and the social relationships creating it, powerfully influence where dissent occurs." Rafail finds that Privately Owned Public Spaces (POPs) are increasingly sites of gathering and protest, reflecting decentralization of public gathering spaces.Looking at the protests following George Floyd's death in 2020, The US Crisis Monitor collected data on the political demonstrations that took place during from May - August 2020, with substantial focus on BLM protests throughout the United States. Their maps show the spatial concentration of protests in urban centers and that the majority of gatherings were protests and not riots.
 
 # Data
 
 The sample population for this study is the entire citizen population of New York City in the summer of 2020. The analysis includes the following variables:
 
-*NYC Arrests for Summer 2020
-*Location of Public Spaces in New York
-*NYC Borough Boundaries
-*NYPD Sector Boundaries
-*Libraries
+* NYC Arrests for Summer 2020
+* Location of Public Spaces in New York
+* NYC Borough Boundaries
+* NYPD Sector Boundaries
+* Libraries
+* Privately Owned Public Spaces (POPs)
+* Census 2020 Population by County
+* Census 2020 Race by County
+
+The arrest-level data needs to be filtered down further but currently represents 27,752 variable rows of arrests. We can use the spatial categories (lat, long) to compare it with the locations of amenities (Wifi in Parks, POPs, and Libraries) which represent 1,243 rows (638 Wifi locations, 388 POPs, and 216 Libraries). 
 
 ## Load data
 
@@ -47,10 +52,12 @@ nyc_arrests <-read.csv(file = "data/NYC_Arrests_Summer2020.csv")
 wifiparks <-read.csv(file ="data/WiFiPublicSpace.csv")
 Boroughs <- read.csv(file ="data/NYCBoroughBoundaries.csv")
 NYPDSectors <-read.csv(file = "data/NYPD_Sectors.csv")
+library <-read.csv(file = "data/LIBRARY.csv")
+POPs <-read.csv(file = "data/POPS.csv")
 ```
 
 Bringing in Census Data
-```{r}
+```{r, message=FALSE, results='hide'}
 census2020 <-get_decennial(geography = "county",
                         year= 2020,
                         variables =c(pop= "P1_001N",
@@ -59,6 +66,10 @@ census2020 <-get_decennial(geography = "county",
                         geometry = TRUE)
 ```
 
+# References
 
+Rafail, Patrick. “Protest in the City: Urban Spatial Restructuring and Dissent in New York, 1960–2006.” Urban Studies 55, no. 1 (January 2018): 244–60. https://doi.org/10.1177/0042098016661464.
+
+Armed Conflict Location & Event Data Project (ACLED), The US Crisis Monitor, 2020 https://acleddata.com/acleddatanew/wp-content/uploads/2020/09/ACLED_USDataReview_Sum2020_SeptWebPDF_HiRes.pdf
 
 
