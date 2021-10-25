@@ -24,6 +24,8 @@ What is the relationship between the presence of open space and other amenities 
 
 # Data
 
+The sample population for this study is the entire citizen population of New York City in the summer of 2020. The analysis includes the following variables:
+
 *
 *
 
@@ -39,8 +41,22 @@ library(knitr)
 
 Bringing in New York Data
 ```{r, message=FALSE, results='hide'}
-nyc_arrests <-read.csv("NYC_Arrests_Summer2020.csv")
-wifiparks <-read.csv("WiFiPublicSpace.csv")
+nyc_arrests <-read.csv(file = "data/NYC_Arrests_Summer2020.csv")
+wifiparks <-read.csv(file ="data/WiFiPublicSpace.csv")
+Boroughs <- read.csv(file ="data/NYCBoroughBoundaries.csv")
+NYPDSectors <-read.csv(file = "data/NYPD_Sectors.csv")
 ```
+
+Bringing in Census Data
+```{r}
+census2020 <-get_decennial(geography = "county",
+                        year= 2020,
+                        variables =c(pop= "P1_001N",
+                                     race_pop = "P1_002N"),
+                        output = "wide",
+                        geometry = TRUE)
+```
+
+
 
 
