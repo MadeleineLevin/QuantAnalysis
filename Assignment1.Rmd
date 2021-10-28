@@ -35,7 +35,17 @@ The sample population for this study is the entire citizen population of New Yor
 * Census 2020 Population by County
 * Census 2020 Race by County
 
-The arrest-level data needs to be filtered down further but currently represents 27,752 variable rows of arrests. We can use the spatial categories (lat, long) to compare it with the locations of amenities (Wifi in Parks, POPs, and Libraries) which represent 1,243 rows (638 Wifi locations, 388 POPs, and 216 Libraries). 
+The arrest-level data was filtered down to arrest descriptions that correspond with protest activity. While not all arrests in each category can be tied to protests, the categories significantly filter down over 25,000 arrests over the summer months to 3,158 arrest rows that are more likely to be associated with protests. We can use the spatial categories (lat, long) to compare it with the locations of amenities (Wifi in Parks, POPs, and Libraries) which represent 1,243 rows (638 Wifi locations, 388 POPs, and 216 Libraries). 
+
+Arrest Descriptions Used for Protest Arrests:
+
+* CRIMINAL MISCHIEF & RELATED OF
+* OFF. AGNST PUB ORD SENSBLTY &
+* CRIMINAL TRESPASS
+* NYS LAWS-UNCLASSIFIED FELONY
+* OFFENSES AGAINST PUBLIC ADMININISTRATION (RESISTING ARREST)
+* OFFENSES AGAINST PUBLIC SAFETY
+* DISORDERLY CONDUCT
 
 ## Load data
 
@@ -44,17 +54,36 @@ library(tidyverse)
 library(tidycensus)
 library(readxl)
 library(knitr)
+library(sf)
+library(ggthemes)
+library(ggspatial)
+library(units)
+library(nngeo)
+library(geosphere)
 ```
 
 Bringing in New York Data
 ```{r, message=FALSE, results='hide'}
-nyc_arrests <-read.csv(file = "data/NYC_Arrests_Summer2020.csv")
+nyc_arrests <-read.csv(file = "data/NYC_FilteredArrests.csv")
 wifiparks <-read.csv(file ="data/WiFiPublicSpace.csv")
 Boroughs <- read.csv(file ="data/NYCBoroughBoundaries.csv")
 NYPDSectors <-read.csv(file = "data/NYPD_Sectors.csv")
 library <-read.csv(file = "data/LIBRARY.csv")
 POPs <-read.csv(file = "data/POPS.csv")
 ```
+
+Calculating Distances
+I need to fix the library dataset and break it down by lat/long
+```{r}
+mat <- distm(nyc_arrests[,c('Longitude','Latitude')], wifiparks[,c('Longitude','Latitude')], fun=distVincentyEllipsoid)
+
+nyc_arrests$wifi_dist <- apply(mat, 1, min)
+
+matpop <- distm(nyc_arrests[,c('Longitude','Latitude')], POPs[,c('Longitude','Latitude')], fun=distVincentyEllipsoid)
+
+nyc_arrests$pops_dist <- apply(matpop, 1, min)
+```
+
 
 Bringing in Census Data
 ```{r, message=FALSE, results='hide'}

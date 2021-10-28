@@ -269,20 +269,44 @@ div.tocify {
 <li>Census 2020 Population by County</li>
 <li>Census 2020 Race by County</li>
 </ul>
-<p>The arrest-level data needs to be filtered down further but currently represents 27,752 variable rows of arrests. We can use the spatial categories (lat, long) to compare it with the locations of amenities (Wifi in Parks, POPs, and Libraries) which represent 1,243 rows (638 Wifi locations, 388 POPs, and 216 Libraries).</p>
+<p>The arrest-level data was filtered down to arrest descriptions that correspond with protest activity. While not all arrests in each category can be tied to protests, the categories significantly filter down over 25,000 arrests over the summer months to 3,158 arrest rows that are more likely to be associated with protests. We can use the spatial categories (lat, long) to compare it with the locations of amenities (Wifi in Parks, POPs, and Libraries) which represent 1,243 rows (638 Wifi locations, 388 POPs, and 216 Libraries).</p>
+<p>Arrest Descriptions Used for Protest Arrests:</p>
+<ul>
+<li>CRIMINAL MISCHIEF &amp; RELATED OF</li>
+<li>OFF. AGNST PUB ORD SENSBLTY &amp;</li>
+<li>CRIMINAL TRESPASS</li>
+<li>NYS LAWS-UNCLASSIFIED FELONY</li>
+<li>OFFENSES AGAINST PUBLIC ADMININISTRATION (RESISTING ARREST)</li>
+<li>OFFENSES AGAINST PUBLIC SAFETY</li>
+<li>DISORDERLY CONDUCT</li>
+</ul>
 <div id="load-data" class="section level2">
 <h2>Load data</h2>
 <pre class="r"><code>library(tidyverse)
 library(tidycensus)
 library(readxl)
-library(knitr)</code></pre>
+library(knitr)
+library(sf)
+library(ggthemes)
+library(ggspatial)
+library(units)
+library(nngeo)
+library(geosphere)</code></pre>
 <p>Bringing in New York Data</p>
-<pre class="r"><code>nyc_arrests &lt;-read.csv(file = &quot;data/NYC_Arrests_Summer2020.csv&quot;)
+<pre class="r"><code>nyc_arrests &lt;-read.csv(file = &quot;data/NYC_FilteredArrests.csv&quot;)
 wifiparks &lt;-read.csv(file =&quot;data/WiFiPublicSpace.csv&quot;)
 Boroughs &lt;- read.csv(file =&quot;data/NYCBoroughBoundaries.csv&quot;)
 NYPDSectors &lt;-read.csv(file = &quot;data/NYPD_Sectors.csv&quot;)
 library &lt;-read.csv(file = &quot;data/LIBRARY.csv&quot;)
 POPs &lt;-read.csv(file = &quot;data/POPS.csv&quot;)</code></pre>
+<p>Calculating Distances I need to fix the library dataset and break it down by lat/long</p>
+<pre class="r"><code>mat &lt;- distm(nyc_arrests[,c(&#39;Longitude&#39;,&#39;Latitude&#39;)], wifiparks[,c(&#39;Longitude&#39;,&#39;Latitude&#39;)], fun=distVincentyEllipsoid)
+
+nyc_arrests$wifi_dist &lt;- apply(mat, 1, min)
+
+matpop &lt;- distm(nyc_arrests[,c(&#39;Longitude&#39;,&#39;Latitude&#39;)], POPs[,c(&#39;Longitude&#39;,&#39;Latitude&#39;)], fun=distVincentyEllipsoid)
+
+nyc_arrests$pops_dist &lt;- apply(matpop, 1, min)</code></pre>
 <p>Bringing in Census Data</p>
 <pre class="r"><code>census2020 &lt;-get_decennial(geography = &quot;county&quot;,
                         year= 2020,
