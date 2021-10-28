@@ -87,11 +87,12 @@ nyc_arrests$pops_dist <- apply(matpop, 1, min)
 
 Bringing in Census Data
 ```{r, message=FALSE, results='hide'}
-census2020 <-get_decennial(geography = "county",
+census2020 <- get_decennial(geography = "county",
                         year= 2020,
                         variables =c(pop= "P1_001N",
                                      race_pop = "P1_002N"),
-                        output = "wide",
+                        state = "NY", county = c("Queens", "Kings", "Richmond","New York", "Bronx"),
+              output = "wide",
                         geometry = TRUE)
 ```
 
