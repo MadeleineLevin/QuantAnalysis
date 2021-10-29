@@ -64,30 +64,33 @@ library(geosphere)
 
 Bringing in New York Data
 ```{r, message=FALSE, results='hide'}
-nyc_arrests <-read.csv(file = "data/NYC_FilteredArrests.csv")
-wifiparks <-read.csv(file ="data/WiFiPublicSpace.csv")
-Boroughs <- read.csv(file ="data/NYCBoroughBoundaries.csv")
-NYPDSectors <-read.csv(file = "data/NYPD_Sectors.csv")
-library <-read.csv(file = "data/LIBRARY.csv")
-POPs <-read.csv(file = "data/POPS.csv")
+nyc_arrests <-read_csv(file = "data/NYC_Arrests_Summer2020.csv")
+nyc_arrests1 <- read_csv("data/Summer2020.csv")
+nyc_filteredarrests <-read_csv(file = "data/NYC_FilteredArrests.csv")
+wifiparks <-read_csv(file ="data/WiFiPublicSpace.csv")
+Boroughs <- read_csv(file ="data/NYCBoroughBoundaries.csv")
+NYPDSectors <-read_csv(file = "data/NYPD_Sectors.csv")
+library <-read_csv(file = "data/LIBRARY.csv")
+POPs <-read_csv(file = "data/POPS.csv")
 ```
+
 
 Calculating Distances
 I need to fix the library dataset and break it down by lat/long
 ```{r}
-mat <- distm(nyc_arrests[,c('Longitude','Latitude')], wifiparks[,c('Longitude','Latitude')], fun=distVincentyEllipsoid)
+mat <- distm(nyc_filteredarrests[,c('Longitude','Latitude')], wifiparks[,c('Longitude','Latitude')], fun=distVincentyEllipsoid)
 
-nyc_arrests$wifi_dist <- apply(mat, 1, min)
+nyc_filteredarrests$wifi_dist <- apply(mat, 1, min)
 
-matpop <- distm(nyc_arrests[,c('Longitude','Latitude')], POPs[,c('Longitude','Latitude')], fun=distVincentyEllipsoid)
+matpop <- distm(nyc_filteredarrests[,c('Longitude','Latitude')], POPs[,c('Longitude','Latitude')], fun=distVincentyEllipsoid)
 
-nyc_arrests$pops_dist <- apply(matpop, 1, min)
+nyc_filteredarrests$pops_dist <- apply(matpop, 1, min)
 ```
 
 
 Bringing in Census Data
 ```{r, message=FALSE, results='hide'}
-census2020 <- get_decennial(geography = "county",
+census2020 <- get_decennial(geography = "tract",
                         year= 2020,
                         variables =c(pop= "P1_001N",
                                      race_pop = "P1_002N"),
@@ -95,6 +98,65 @@ census2020 <- get_decennial(geography = "county",
               output = "wide",
                         geometry = TRUE)
 ```
+
+```{r}
+NY_state_plane <- "+proj=lcc +lat_1=41.03333333333333 +lat_2=40.66666666666666 +lat_0=40.16666666666666 +lon_0=-74 +x_0=300000.0000000001 +y_0=0 +ellps=GRS80 +datum=NAD83 +to_meter=0.3048006096012192 +no_defs "
+census2020 <-census2020 %>%
+   st_transform(NY_state_plane)
+
+```
+
+# Calculations
+
+```{r}
+wifi_t_test <- t.test(nyc_filteredarrests$wifi_dist)
+wifi_t_test
+```
+
+```{r}
+wifi_quartiles <- quantile(nyc_filteredarrests$wifi_dist, na.rm = TRUE)
+wifi_quartiles
+```
+
+```{r}
+wifi_st_dev <- sd(nyc_filteredarrests$wifi_dist, na.rm = TRUE)
+wifi_st_dev
+```
+
+```{r}
+covid_hist <- ggplot(nyc_filteredarrests) +
+  geom_histogram(aes(x = wifi_dist),
+                 bins = 300)
+
+covid_hist
+```
+# Categorical Data
+
+```{r}
+pct_female <- t.test(nyc_filteredarrests$PERP_SEX == "F")
+pct_female
+pct_male <-  t.test(nyc_filteredarrests$PERP_SEX == "M")
+pct_male
+```
+
+```{r}
+cat_summary_sex <- tibble(`Sex` = 
+                              c("Female",
+                                "Male"),
+                            `Sample proportion` = 
+                              c(pct_female$estimate * 100,
+                                pct_female$estimate *100),
+                            `95-percent confidence - low` = 
+                              c(pct_female$conf.int[1] * 100,
+                                pct_male$conf.int[1] * 100),
+                            `95-percent confidence - high` = 
+                              c(pct_female$conf.int[2] * 100,
+                                pct_male$conf.int[2] * 100))
+
+kable(cat_summary_sex, digits = 0)
+```
+
+
 
 # References
 
