@@ -71,6 +71,7 @@ Bringing in New York Arrest Data
 
 ```{r}
 arrestdata <-st_read("data/summer_NYC_resisting_arrest.geojson")
+allarrests <-st_read("data/summer2020arrests.geojson")
 ```
 
 
@@ -82,7 +83,7 @@ subway<-st_read("data/Subway.geojson")
 ```
 
 Bringing in Census Data
-```{r, message = FALSE, results = hide}
+```{r, message = FALSE}
 census2020 <- get_decennial(geography = "tract",
                         year= 2020,
                         variables =c(pop= "P1_001N",
@@ -106,6 +107,9 @@ census2020 <-census2020 %>%
 arrestdata <-arrestdata %>%
    st_transform(NY_state_plane)
 
+allarrests <- allarrests %>%
+   st_transform(NY_state_plane)
+
 POPs <-POPs %>%
    st_transform(NY_state_plane)
 
@@ -122,6 +126,9 @@ subway <-subway %>%
 ```{r}
 census2020 <- census2020 %>%
   mutate(num_arrests = lengths(st_covers(census2020, arrestdata)))
+
+census2020 <- census2020 %>%
+   mutate(allarrestssummer = lengths(st_covers(census2020, allarrests)))
 
 census2020 <- census2020 %>%
   mutate(num_library = lengths(st_covers(census2020, library)))
