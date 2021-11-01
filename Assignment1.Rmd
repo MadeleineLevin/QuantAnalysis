@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Research question
 
-What is the relationship between the presence of open space and other amenities in NYC boroughs and the number of people arrested during protests against police brutality in summer 2020? 
+What is the relationship between the presence of open space and other amenities in NYC neighborhoods and the number of people arrested during protests against police brutality in summer 2020? 
 
 # Prior research
 While there is not a lot of quantitative research exploring the relationship between open space and protest in summer 2020, Rafail (2018) found that in NYC protests between 1960 and 2006, "the built
@@ -39,10 +39,6 @@ The arrest-level data was filtered down to arrest descriptions that correspond w
 
 Arrest Descriptions Used for Protest Arrests:
 
-* CRIMINAL MISCHIEF & RELATED OF
-* OFF. AGNST PUB ORD SENSBLTY &
-* CRIMINAL TRESPASS
-* NYS LAWS-UNCLASSIFIED FELONY
 * OFFENSES AGAINST PUBLIC ADMININISTRATION (RESISTING ARREST)
 * OFFENSES AGAINST PUBLIC SAFETY
 * DISORDERLY CONDUCT
@@ -62,38 +58,35 @@ library(nngeo)
 library(geosphere)
 ```
 
-Bringing in New York Data
-```{r, message=FALSE, results='hide'}
-nyc_arrests <-read_csv(file = "data/NYC_Arrests_Summer2020.csv")
-nyc_arrests1 <- read_csv("data/Summer2020.csv")
-nyc_filteredarrests <-read_csv(file = "data/NYC_FilteredArrests.csv")
-wifiparks <-read_csv(file ="data/WiFiPublicSpace.csv")
-Boroughs <- read_csv(file ="data/NYCBoroughBoundaries.csv")
-NYPDSectors <-read_csv(file = "data/NYPD_Sectors.csv")
-library <-read_csv(file = "data/LIBRARY.csv")
-POPs <-read_csv(file = "data/POPS.csv")
-```
 
-
-Calculating Distances
-I need to fix the library dataset and break it down by lat/long
+Bringing in New York Data 2
 ```{r}
-mat <- distm(nyc_filteredarrests[,c('Longitude','Latitude')], wifiparks[,c('Longitude','Latitude')], fun=distVincentyEllipsoid)
-
-nyc_filteredarrests$wifi_dist <- apply(mat, 1, min)
-
-matpop <- distm(nyc_filteredarrests[,c('Longitude','Latitude')], POPs[,c('Longitude','Latitude')], fun=distVincentyEllipsoid)
-
-nyc_filteredarrests$pops_dist <- apply(matpop, 1, min)
+nyc_arrests_spatial <-st_read("data/NYPD Arrests Data (Historic).geojson")%>%
+  filter(pd_desc == "RESISTING ARREST")
+```
+```{r}
+st_write(nyc_arrests_spatial, dsn="data.geojson")
 ```
 
+
+```{r}
+POPs <-st_read("https://data.cityofnewyork.us/resource/rvih-nhyn.geojson")
+library <-st_read("data/POPS.geojson")
+parks <-st_read("data/Parks.geojson")
+subway<-st_read("data/Subway.geojson")
+```
 
 Bringing in Census Data
 ```{r}
 census2020 <- get_decennial(geography = "tract",
                         year= 2020,
                         variables =c(pop= "P1_001N",
-                                     race_pop = "P1_002N"),
+                                     race_pop = "P2_001N",
+                                     latino = "P2_002N",
+                                     white_alone = "P2_005N",
+                                     black_alone = "P2_006N",
+                                     native_alone = "P2_007N", 
+                                     asian_alone = "P2_008N"),
                         state = "NY", county = c("Queens", "Kings", "Richmond","New York", "Bronx"),
               output = "wide",
                         geometry = TRUE)
@@ -105,58 +98,64 @@ NY_state_plane <- "+proj=lcc +lat_1=41.03333333333333 +lat_2=40.66666666666666 +
 census2020 <-census2020 %>%
    st_transform(NY_state_plane)
 
+nyc_arrests_spatial <-nyc_arrests_spatial %>%
+   st_transform(NY_state_plane)
+
+POPs <-POPs %>%
+   st_transform(NY_state_plane)
+
+library <-library %>%
+   st_transform(NY_state_plane)
+
+parks <-parks %>%
+   st_transform(NY_state_plane)
+
+subway <-subway %>%
+   st_transform(NY_state_plane)
+```
+
+```{r}
+census2020 <- census2020 %>%
+  mutate(num_arrests = lengths(st_covers(census2020, nyc_arrests_spatial)))
+
+census2020 <- census2020 %>%
+  mutate(num_library = lengths(st_covers(census2020, library)))
+
+census2020 <- census2020 %>%
+  mutate(num_POPs = lengths(st_covers(census2020, POPs)))
+
+census2020 <- census2020 %>%
+  mutate(num_parks = lengths(st_covers(census2020, parks)))
+
+census2020 <- census2020 %>%
+  mutate(num_subway = lengths(st_covers(census2020, subway)))
 ```
 
 # Calculations
 
 ```{r}
-wifi_t_test <- t.test(nyc_filteredarrests$wifi_dist)
-wifi_t_test
+arrest_t_test <- t.test(census2020$num_arrests)
+arrest_t_test
 ```
 
 ```{r}
-wifi_quartiles <- quantile(nyc_filteredarrests$wifi_dist, na.rm = TRUE)
-wifi_quartiles
+arrest_quartiles <- quantile(census2020$num_arrests, na.rm = TRUE)
+arrest_quartiles
 ```
 
 ```{r}
-wifi_st_dev <- sd(nyc_filteredarrests$wifi_dist, na.rm = TRUE)
-wifi_st_dev
+arrest_st_dev <- sd(census2020$num_arrests, na.rm = TRUE)
+arrest_st_dev
 ```
 
 ```{r}
-covid_hist <- ggplot(nyc_filteredarrests) +
-  geom_histogram(aes(x = wifi_dist),
-                 bins = 300)
+arrest_hist <- ggplot(census2020) +
+  geom_histogram(aes(x = num_arrests),
+                 bins = 50)
 
-covid_hist
+arrest_hist
 ```
 # Categorical Data
-
-```{r}
-pct_female <- t.test(nyc_filteredarrests$PERP_SEX == "F")
-pct_female
-pct_male <-  t.test(nyc_filteredarrests$PERP_SEX == "M")
-pct_male
-```
-
-```{r}
-cat_summary_sex <- tibble(`Sex` = 
-                              c("Female",
-                                "Male"),
-                            `Sample proportion` = 
-                              c(pct_female$estimate * 100,
-                                pct_female$estimate *100),
-                            `95-percent confidence - low` = 
-                              c(pct_female$conf.int[1] * 100,
-                                pct_male$conf.int[1] * 100),
-                            `95-percent confidence - high` = 
-                              c(pct_female$conf.int[2] * 100,
-                                pct_male$conf.int[2] * 100))
-
-kable(cat_summary_sex, digits = 0)
-```
-
 
 
 # References
