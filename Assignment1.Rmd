@@ -10,7 +10,7 @@ output:
      toc_float: true
 ---
 
-```{r setup, include=FALSE}
+```{r include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -53,7 +53,7 @@ Arrest Descriptions Used as Proxy for Protest Arrests:
 
 ## Load data
 
-```{r, message=FALSE}
+```{r setup, warning = FALSE, message = FALSE, echo = FALSE, include=FALSE}
 library(tidyverse)
 library(tidycensus)
 library(readxl)
@@ -67,14 +67,14 @@ library(geosphere)
 ```
 
 
-Bringing in New York Data 2
+Bringing in New York Arrest Data
 
-```{r , message=FALSE}
+```{r}
 arrestdata <-st_read("data/summer_NYC_resisting_arrest.geojson")
 ```
 
 
-```{r, message=FALSE}
+```{r}
 POPs <-st_read("https://data.cityofnewyork.us/resource/rvih-nhyn.geojson")
 library <-st_read("data/Library.geojson")
 parks <-st_read("data/Parks.geojson")
@@ -82,7 +82,7 @@ subway<-st_read("data/Subway.geojson")
 ```
 
 Bringing in Census Data
-```{r}
+```{r, message = FALSE, results = hide}
 census2020 <- get_decennial(geography = "tract",
                         year= 2020,
                         variables =c(pop= "P1_001N",
@@ -134,6 +134,7 @@ census2020 <- census2020 %>%
 
 census2020 <- census2020 %>%
   mutate(num_subway = lengths(st_covers(census2020, subway)))
+
 ```
 
 # Calculations
@@ -162,6 +163,10 @@ arrest_hist
 ```
 
 # Categorical Data
+```{r}
+pct_Queens<- t.test(arrestdata$arrest_boro == "Q")
+pct_Queens
+```
 
 
 # References
