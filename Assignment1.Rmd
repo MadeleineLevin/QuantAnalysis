@@ -35,13 +35,11 @@ The sample population for this study is the entire citizen population of New Yor
 * Census 2020 Population by County
 * Census 2020 Race by County
 
-The arrest-level data was filtered down to arrest descriptions that correspond with protest activity. While not all arrests in each category can be tied to protests, the categories significantly filter down over 25,000 arrests over the summer months to 3,158 arrest rows that are more likely to be associated with protests. We can use the spatial categories (lat, long) to compare it with the locations of amenities (Wifi in Parks, POPs, and Libraries) which represent 1,243 rows (638 Wifi locations, 388 POPs, and 216 Libraries). 
+The arrest-level data was filtered down to "resisting arrest", an arrest description that often corresponds with protest activity. While not all arrests in this category can be tied to protests and not all protest arrests are in this category, we are using it here as a proxy for protest activity, the categories significantly filter down over 25,000 arrests over the summer months to 395 arrest rows that are more likely to be associated with protests. We used spatial processing tools to tie this data to NYC's 2,327 census tracts along with other neighborhood amenities including parks, POPS (Privately Operated Public Spaces), libraries, and subway stations.
 
-Arrest Descriptions Used for Protest Arrests:
+Arrest Descriptions Used as Proxy for Protest Arrests:
 
 * OFFENSES AGAINST PUBLIC ADMININISTRATION (RESISTING ARREST)
-* OFFENSES AGAINST PUBLIC SAFETY
-* DISORDERLY CONDUCT
 
 ## Load data
 
@@ -60,18 +58,15 @@ library(geosphere)
 
 
 Bringing in New York Data 2
+
 ```{r}
-nyc_arrests_spatial <-st_read("data/NYPD Arrests Data (Historic).geojson")%>%
-  filter(pd_desc == "RESISTING ARREST")
-```
-```{r}
-st_write(nyc_arrests_spatial, dsn="data.geojson")
+arrestdata <-st_read("data/summer_NYC_resisting_arrest.geojson")
 ```
 
 
 ```{r}
 POPs <-st_read("https://data.cityofnewyork.us/resource/rvih-nhyn.geojson")
-library <-st_read("data/POPS.geojson")
+library <-st_read("data/Library.geojson")
 parks <-st_read("data/Parks.geojson")
 subway<-st_read("data/Subway.geojson")
 ```
@@ -98,7 +93,7 @@ NY_state_plane <- "+proj=lcc +lat_1=41.03333333333333 +lat_2=40.66666666666666 +
 census2020 <-census2020 %>%
    st_transform(NY_state_plane)
 
-nyc_arrests_spatial <-nyc_arrests_spatial %>%
+arrestdata <-arrestdata %>%
    st_transform(NY_state_plane)
 
 POPs <-POPs %>%
@@ -116,7 +111,7 @@ subway <-subway %>%
 
 ```{r}
 census2020 <- census2020 %>%
-  mutate(num_arrests = lengths(st_covers(census2020, nyc_arrests_spatial)))
+  mutate(num_arrests = lengths(st_covers(census2020, arrestdata)))
 
 census2020 <- census2020 %>%
   mutate(num_library = lengths(st_covers(census2020, library)))
