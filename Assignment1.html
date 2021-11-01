@@ -259,11 +259,19 @@ div.tocify {
 <div id="data" class="section level1">
 <h1>Data</h1>
 <p>The sample population for this study is the entire citizen population of New York City in the summer of 2020. The analysis includes the following variables:</p>
+<p>Variables</p>
+<p>Continuous</p>
 <ul>
-<li>NYC Arrests for Summer 2020</li>
-<li>Location of Public Spaces in New York</li>
-<li>NYC Borough Boundaries</li>
-<li>NYPD Sector Boundaries</li>
+<li>NYC Arrests for Summer 2020 for “Resisting Arrest”</li>
+<li>Number of Parks</li>
+<li>Number of POPS</li>
+<li>Number of Subway Entrances</li>
+<li>Number of Libraries</li>
+</ul>
+<p>Categorical</p>
+<ul>
+<li>NYC Boroughs</li>
+<li>Census Tracts with</li>
 <li>Libraries</li>
 <li>Privately Owned Public Spaces (POPs)</li>
 <li>Census 2020 Population by County</li>
@@ -289,7 +297,7 @@ library(geosphere)</code></pre>
 <p>Bringing in New York Data 2</p>
 <pre class="r"><code>arrestdata &lt;-st_read(&quot;data/summer_NYC_resisting_arrest.geojson&quot;)</code></pre>
 <pre><code>## Reading layer `summer_NYC_resisting_arrest&#39; from data source 
-##   `/Users/Madeleine/Documents/Spatial Analysis/FinalPortfolio/QuantAnalysis/data/summer_NYC_resisting_arrest.geojson&#39; 
+##   `/Users/Madeleine/Documents/Spatial Analysis/Quant Analysis/QuantAnalysis/data/summer_NYC_resisting_arrest.geojson&#39; 
 ##   using driver `GeoJSON&#39;
 ## Simple feature collection with 395 features and 20 fields
 ## Geometry type: POINT
@@ -307,7 +315,7 @@ library(geosphere)</code></pre>
 ## Geodetic CRS:  WGS 84</code></pre>
 <pre class="r"><code>library &lt;-st_read(&quot;data/Library.geojson&quot;)</code></pre>
 <pre><code>## Reading layer `Library&#39; from data source 
-##   `/Users/Madeleine/Documents/Spatial Analysis/FinalPortfolio/QuantAnalysis/data/Library.geojson&#39; 
+##   `/Users/Madeleine/Documents/Spatial Analysis/Quant Analysis/QuantAnalysis/data/Library.geojson&#39; 
 ##   using driver `GeoJSON&#39;
 ## Simple feature collection with 216 features and 12 fields
 ## Geometry type: POINT
@@ -316,7 +324,7 @@ library(geosphere)</code></pre>
 ## Geodetic CRS:  WGS 84</code></pre>
 <pre class="r"><code>parks &lt;-st_read(&quot;data/Parks.geojson&quot;)</code></pre>
 <pre><code>## Reading layer `Parks&#39; from data source 
-##   `/Users/Madeleine/Documents/Spatial Analysis/FinalPortfolio/QuantAnalysis/data/Parks.geojson&#39; 
+##   `/Users/Madeleine/Documents/Spatial Analysis/Quant Analysis/QuantAnalysis/data/Parks.geojson&#39; 
 ##   using driver `GeoJSON&#39;
 ## Simple feature collection with 12491 features and 10 fields
 ## Geometry type: MULTIPOLYGON
@@ -325,7 +333,7 @@ library(geosphere)</code></pre>
 ## Geodetic CRS:  WGS 84</code></pre>
 <pre class="r"><code>subway&lt;-st_read(&quot;data/Subway.geojson&quot;)</code></pre>
 <pre><code>## Reading layer `Subway&#39; from data source 
-##   `/Users/Madeleine/Documents/Spatial Analysis/FinalPortfolio/QuantAnalysis/data/Subway.geojson&#39; 
+##   `/Users/Madeleine/Documents/Spatial Analysis/Quant Analysis/QuantAnalysis/data/Subway.geojson&#39; 
 ##   using driver `GeoJSON&#39;
 ## Simple feature collection with 1928 features and 4 fields
 ## Geometry type: POINT
@@ -368,8 +376,6 @@ library(geosphere)</code></pre>
   |                                                                            
   |===                                                                   |   5%
   |                                                                            
-  |====                                                                  |   5%
-  |                                                                            
   |====                                                                  |   6%
   |                                                                            
   |=====                                                                 |   7%
@@ -384,9 +390,11 @@ library(geosphere)</code></pre>
   |                                                                            
   |=======                                                               |  10%
   |                                                                            
-  |=======                                                               |  11%
-  |                                                                            
   |========                                                              |  11%
+  |                                                                            
+  |========                                                              |  12%
+  |                                                                            
+  |=========                                                             |  12%
   |                                                                            
   |=========                                                             |  13%
   |                                                                            
@@ -408,9 +416,9 @@ library(geosphere)</code></pre>
   |                                                                            
   |=============                                                         |  19%
   |                                                                            
-  |==============                                                        |  19%
-  |                                                                            
   |==============                                                        |  20%
+  |                                                                            
+  |==============                                                        |  21%
   |                                                                            
   |===============                                                       |  21%
   |                                                                            
@@ -419,6 +427,8 @@ library(geosphere)</code></pre>
   |================                                                      |  22%
   |                                                                            
   |================                                                      |  23%
+  |                                                                            
+  |================                                                      |  24%
   |                                                                            
   |=================                                                     |  24%
   |                                                                            
@@ -433,6 +443,12 @@ library(geosphere)</code></pre>
   |===================                                                   |  28%
   |                                                                            
   |====================                                                  |  28%
+  |                                                                            
+  |====================                                                  |  29%
+  |                                                                            
+  |=====================                                                 |  30%
+  |                                                                            
+  |=====================                                                 |  31%
   |                                                                            
   |======================                                                |  31%
   |                                                                            
@@ -451,8 +467,6 @@ library(geosphere)</code></pre>
   |=========================                                             |  36%
   |                                                                            
   |==========================                                            |  37%
-  |                                                                            
-  |==========================                                            |  38%
   |                                                                            
   |===========================                                           |  38%
   |                                                                            
@@ -474,6 +488,14 @@ library(geosphere)</code></pre>
   |                                                                            
   |===============================                                       |  44%
   |                                                                            
+  |===============================                                       |  45%
+  |                                                                            
+  |================================                                      |  45%
+  |                                                                            
+  |================================                                      |  46%
+  |                                                                            
+  |=================================                                     |  46%
+  |                                                                            
   |=================================                                     |  47%
   |                                                                            
   |=================================                                     |  48%
@@ -482,9 +504,9 @@ library(geosphere)</code></pre>
   |                                                                            
   |==================================                                    |  49%
   |                                                                            
-  |===================================                                   |  50%
+  |===================================                                   |  49%
   |                                                                            
-  |===================================                                   |  51%
+  |===================================                                   |  50%
   |                                                                            
   |====================================                                  |  51%
   |                                                                            
@@ -502,8 +524,6 @@ library(geosphere)</code></pre>
   |                                                                            
   |=======================================                               |  56%
   |                                                                            
-  |========================================                              |  56%
-  |                                                                            
   |========================================                              |  57%
   |                                                                            
   |========================================                              |  58%
@@ -516,19 +536,21 @@ library(geosphere)</code></pre>
   |                                                                            
   |==========================================                            |  60%
   |                                                                            
+  |==========================================                            |  61%
+  |                                                                            
   |===========================================                           |  61%
   |                                                                            
   |===========================================                           |  62%
   |                                                                            
-  |============================================                          |  62%
-  |                                                                            
   |============================================                          |  63%
+  |                                                                            
+  |=============================================                         |  64%
+  |                                                                            
+  |=============================================                         |  65%
   |                                                                            
   |==============================================                        |  65%
   |                                                                            
   |==============================================                        |  66%
-  |                                                                            
-  |===============================================                       |  66%
   |                                                                            
   |===============================================                       |  67%
   |                                                                            
@@ -550,8 +572,6 @@ library(geosphere)</code></pre>
   |                                                                            
   |===================================================                   |  73%
   |                                                                            
-  |===================================================                   |  74%
-  |                                                                            
   |====================================================                  |  74%
   |                                                                            
   |====================================================                  |  75%
@@ -562,13 +582,9 @@ library(geosphere)</code></pre>
   |                                                                            
   |======================================================                |  77%
   |                                                                            
-  |======================================================                |  78%
-  |                                                                            
   |=======================================================               |  78%
   |                                                                            
   |=======================================================               |  79%
-  |                                                                            
-  |========================================================              |  79%
   |                                                                            
   |========================================================              |  80%
   |                                                                            
@@ -598,8 +614,6 @@ library(geosphere)</code></pre>
   |                                                                            
   |==============================================================        |  89%
   |                                                                            
-  |===============================================================       |  89%
-  |                                                                            
   |===============================================================       |  90%
   |                                                                            
   |================================================================      |  91%
@@ -618,11 +632,17 @@ library(geosphere)</code></pre>
   |                                                                            
   |===================================================================   |  96%
   |                                                                            
+  |====================================================================  |  96%
+  |                                                                            
   |====================================================================  |  97%
+  |                                                                            
+  |====================================================================  |  98%
   |                                                                            
   |===================================================================== |  98%
   |                                                                            
   |===================================================================== |  99%
+  |                                                                            
+  |======================================================================|  99%
   |                                                                            
   |======================================================================| 100%</code></pre>
 <pre><code>## Note: 2020 decennial Census data use differential privacy, a technique that
