@@ -26,10 +26,20 @@ environment, and the social relationships creating it, powerfully influence wher
 
 The sample population for this study is the entire citizen population of New York City in the summer of 2020. The analysis includes the following variables:
 
-* NYC Arrests for Summer 2020
-* Location of Public Spaces in New York
-* NYC Borough Boundaries
-* NYPD Sector Boundaries
+Variables
+
+Continuous
+
+* NYC Arrests for Summer 2020 for "Resisting Arrest"
+* Number of Parks
+* Number of POPS
+* Number of Subway Entrances
+* Number of Libraries
+
+Categorical
+
+* NYC Boroughs
+* Census Tracts with 
 * Libraries
 * Privately Owned Public Spaces (POPs)
 * Census 2020 Population by County
