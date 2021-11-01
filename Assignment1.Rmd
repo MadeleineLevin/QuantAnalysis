@@ -69,12 +69,12 @@ library(geosphere)
 
 Bringing in New York Data 2
 
-```{r}
+```{r , message=FALSE}
 arrestdata <-st_read("data/summer_NYC_resisting_arrest.geojson")
 ```
 
 
-```{r}
+```{r, message=FALSE}
 POPs <-st_read("https://data.cityofnewyork.us/resource/rvih-nhyn.geojson")
 library <-st_read("data/Library.geojson")
 parks <-st_read("data/Parks.geojson")
