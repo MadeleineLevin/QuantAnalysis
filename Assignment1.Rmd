@@ -157,7 +157,7 @@ arrest_st_dev
 ```{r}
 arrest_hist <- ggplot(census2020) +
   geom_histogram(aes(x = num_arrests),
-                 bins = 50)
+                 bins = 30)
 
 arrest_hist
 ```
