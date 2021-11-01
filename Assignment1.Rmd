@@ -160,6 +160,7 @@ arrest_hist <- ggplot(census2020) +
 
 arrest_hist
 ```
+
 # Categorical Data
 
 
