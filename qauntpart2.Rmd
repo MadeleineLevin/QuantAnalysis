@@ -1,0 +1,56 @@
+---
+title: "Qual2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+library(tidycensus)
+library(readxl)
+library(knitr)
+library(tigris)
+library(sf)
+library(gridExtra)
+```
+
+
+```{r}
+census <- get_decennial(geography = "county", 
+                        year = 2020,
+                        variables = c(pop = "P1_001N"),
+                        output = "wide",
+                        geometry = FALSE)
+```
+
+```{r}
+acs_age <- get_acs(geography = "county", 
+                   variables = c(med_age_ = "B01002_001"), 
+                   output = "wide")
+```
+
+```{r}
+areas <- counties() %>%
+  st_set_geometry(NULL) %>%
+  mutate(sq_miles = ALAND / 2589988.11) %>%
+  select(GEOID, sq_miles)
+```
+
+
+```{r}
+covid <- read_csv("main/data/NYC_Arrests_Summer2020.csv") %>%
+  filter(Country_Region == "US" &
+           !is.na(Admin2)) %>%
+  mutate(GEOID = case_when(str_length(as.character(FIPS)) == 5 ~ 
+                            as.character(FIPS),
+                          str_length(as.character(FIPS)) == 4 ~
+                            paste("0", FIPS, sep=""),
+                          TRUE ~ "not a county")) %>%
+  filter(GEOID != "not a county") %>%
+  select(Confirmed, GEOID)
+```
+
