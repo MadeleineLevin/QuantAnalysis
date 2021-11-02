@@ -263,19 +263,15 @@ div.tocify {
 <p>Continuous</p>
 <ul>
 <li>NYC Arrests for Summer 2020 for “Resisting Arrest”</li>
+<li>All NYC Arrests in Summer 2020</li>
 <li>Number of Parks</li>
 <li>Number of POPS</li>
-<li>Number of Subway Entrances</li>
 <li>Number of Libraries</li>
 </ul>
 <p>Categorical</p>
 <ul>
-<li>NYC Boroughs</li>
-<li>Census Tracts with</li>
-<li>Libraries</li>
-<li>Privately Owned Public Spaces (POPs)</li>
-<li>Census 2020 Population by County</li>
-<li>Census 2020 Race by County</li>
+<li>NYC Borough of Arrest</li>
+<li>Does the Census Tract have a Subway Station</li>
 </ul>
 <p>The arrest-level data was filtered down to “resisting arrest”, an arrest description that often corresponds with protest activity. While not all arrests in this category can be tied to protests and not all protest arrests are in this category, we are using it here as a proxy for protest activity, the categories significantly filter down over 25,000 arrests over the summer months to 395 arrest rows that are more likely to be associated with protests. We used spatial processing tools to tie this data to NYC’s 2,327 census tracts along with other neighborhood amenities including parks, POPS (Privately Operated Public Spaces), libraries, and subway stations.</p>
 <p>Arrest Descriptions Used as Proxy for Protest Arrests:</p>
@@ -284,174 +280,12 @@ div.tocify {
 </ul>
 <div id="load-data" class="section level2">
 <h2>Load data</h2>
-<p>Bringing in New York Arrest Data</p>
-<pre class="r"><code>arrestdata &lt;-st_read(&quot;data/summer_NYC_resisting_arrest.geojson&quot;)</code></pre>
-<pre><code>## Reading layer `summer_NYC_resisting_arrest&#39; from data source 
-##   `/Users/Madeleine/Documents/Spatial Analysis/Quant Analysis/QuantAnalysis/data/summer_NYC_resisting_arrest.geojson&#39; 
-##   using driver `GeoJSON&#39;
-## Simple feature collection with 395 features and 20 fields
-## Geometry type: POINT
-## Dimension:     XY
-## Bounding box:  xmin: -74.15694 ymin: 40.56936 xmax: -73.72719 ymax: 40.89173
-## Geodetic CRS:  WGS 84</code></pre>
-<pre class="r"><code>allarrests &lt;-st_read(&quot;data/summer2020arrests.geojson&quot;)</code></pre>
-<pre><code>## Reading layer `summer2020arrests&#39; from data source 
-##   `/Users/Madeleine/Documents/Spatial Analysis/Quant Analysis/QuantAnalysis/data/summer2020arrests.geojson&#39; 
-##   using driver `GeoJSON&#39;
-## Simple feature collection with 38953 features and 20 fields
-## Geometry type: POINT
-## Dimension:     XY
-## Bounding box:  xmin: -74.25015 ymin: 40.50146 xmax: -73.70322 ymax: 40.90837
-## Geodetic CRS:  WGS 84</code></pre>
-<pre class="r"><code>POPs &lt;-st_read(&quot;https://data.cityofnewyork.us/resource/rvih-nhyn.geojson&quot;)</code></pre>
-<pre><code>## Reading layer `rvih-nhyn&#39; from data source 
-##   `https://data.cityofnewyork.us/resource/rvih-nhyn.geojson&#39; 
-##   using driver `GeoJSON&#39;
-## Simple feature collection with 388 features and 33 fields
-## Geometry type: POINT
-## Dimension:     XY
-## Bounding box:  xmin: -74.13974 ymin: 40.57281 xmax: -73.75302 ymax: 40.83361
-## Geodetic CRS:  WGS 84</code></pre>
-<pre class="r"><code>library &lt;-st_read(&quot;data/Library.geojson&quot;)</code></pre>
-<pre><code>## Reading layer `Library&#39; from data source 
-##   `/Users/Madeleine/Documents/Spatial Analysis/Quant Analysis/QuantAnalysis/data/Library.geojson&#39; 
-##   using driver `GeoJSON&#39;
-## Simple feature collection with 216 features and 12 fields
-## Geometry type: POINT
-## Dimension:     XY
-## Bounding box:  xmin: -74.24411 ymin: 40.50953 xmax: -73.71485 ymax: 40.90372
-## Geodetic CRS:  WGS 84</code></pre>
-<pre class="r"><code>parks &lt;-st_read(&quot;data/Parks.geojson&quot;)</code></pre>
-<pre><code>## Reading layer `Parks&#39; from data source 
-##   `/Users/Madeleine/Documents/Spatial Analysis/Quant Analysis/QuantAnalysis/data/Parks.geojson&#39; 
-##   using driver `GeoJSON&#39;
-## Simple feature collection with 12491 features and 10 fields
-## Geometry type: MULTIPOLYGON
-## Dimension:     XY
-## Bounding box:  xmin: -74.25537 ymin: 40.49613 xmax: -73.70182 ymax: 40.91138
-## Geodetic CRS:  WGS 84</code></pre>
-<pre class="r"><code>subway&lt;-st_read(&quot;data/Subway.geojson&quot;)</code></pre>
-<pre><code>## Reading layer `Subway&#39; from data source 
-##   `/Users/Madeleine/Documents/Spatial Analysis/Quant Analysis/QuantAnalysis/data/Subway.geojson&#39; 
-##   using driver `GeoJSON&#39;
-## Simple feature collection with 1928 features and 4 fields
-## Geometry type: POINT
-## Dimension:     XY
-## Bounding box:  xmin: -74.25283 ymin: 40.51211 xmax: -73.75418 ymax: 40.9036
-## Geodetic CRS:  WGS 84</code></pre>
-<p>Bringing in Census Data</p>
-<pre class="r"><code>census2020 &lt;- get_decennial(geography = &quot;tract&quot;,
-                        year= 2020,
-                        variables =c(pop= &quot;P1_001N&quot;,
-                                     race_pop = &quot;P2_001N&quot;,
-                                     latino = &quot;P2_002N&quot;,
-                                     white_alone = &quot;P2_005N&quot;,
-                                     black_alone = &quot;P2_006N&quot;,
-                                     native_alone = &quot;P2_007N&quot;, 
-                                     asian_alone = &quot;P2_008N&quot;),
-                        state = &quot;NY&quot;, county = c(&quot;Queens&quot;, &quot;Kings&quot;, &quot;Richmond&quot;,&quot;New York&quot;, &quot;Bronx&quot;),
-              output = &quot;wide&quot;,
-                        geometry = TRUE)</code></pre>
-<pre><code>## 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |=                                                                     |   1%
-  |                                                                            
-  |=                                                                     |   2%
-  |                                                                            
-  |==                                                                    |   3%
-  |                                                                            
-  |===                                                                   |   4%
-  |                                                                            
-  |===                                                                   |   5%
-  |                                                                            
-  |====                                                                  |   5%
-  |                                                                            
-  |====                                                                  |   6%
-  |                                                                            
-  |=====                                                                 |   7%
-  |                                                                            
-  |=====                                                                 |   8%
-  |                                                                            
-  |======                                                                |   8%
-  |                                                                            
-  |=======                                                               |  10%
-  |                                                                            
-  |========                                                              |  12%
-  |                                                                            
-  |=========                                                             |  13%
-  |                                                                            
-  |==========                                                            |  14%
-  |                                                                            
-  |===========                                                           |  15%
-  |                                                                            
-  |============                                                          |  17%
-  |                                                                            
-  |=============                                                         |  18%
-  |                                                                            
-  |===============                                                       |  21%
-  |                                                                            
-  |================                                                      |  23%
-  |                                                                            
-  |=================                                                     |  25%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |====================                                                  |  29%
-  |                                                                            
-  |======================                                                |  31%
-  |                                                                            
-  |========================                                              |  35%
-  |                                                                            
-  |=============================                                         |  42%
-  |                                                                            
-  |===============================                                       |  45%
-  |                                                                            
-  |================================                                      |  45%
-  |                                                                            
-  |=======================================                               |  56%
-  |                                                                            
-  |==========================================                            |  60%
-  |                                                                            
-  |===========================================                           |  61%
-  |                                                                            
-  |==============================================                        |  66%
-  |                                                                            
-  |===============================================                       |  67%
-  |                                                                            
-  |================================================                      |  69%
-  |                                                                            
-  |=======================================================               |  78%
-  |                                                                            
-  |==========================================================            |  82%
-  |                                                                            
-  |=============================================================         |  88%
-  |                                                                            
-  |==============================================================        |  89%
-  |                                                                            
-  |======================================================================| 100%</code></pre>
-<pre class="r"><code>NY_state_plane &lt;- &quot;+proj=lcc +lat_1=41.03333333333333 +lat_2=40.66666666666666 +lat_0=40.16666666666666 +lon_0=-74 +x_0=300000.0000000001 +y_0=0 +ellps=GRS80 +datum=NAD83 +to_meter=0.3048006096012192 +no_defs &quot;
-census2020 &lt;-census2020 %&gt;%
-   st_transform(NY_state_plane)
-
-arrestdata &lt;-arrestdata %&gt;%
-   st_transform(NY_state_plane)
-
-allarrests &lt;- allarrests %&gt;%
-   st_transform(NY_state_plane)
-
-POPs &lt;-POPs %&gt;%
-   st_transform(NY_state_plane)
-
-library &lt;-library %&gt;%
-   st_transform(NY_state_plane)
-
-parks &lt;-parks %&gt;%
-   st_transform(NY_state_plane)
-
-subway &lt;-subway %&gt;%
-   st_transform(NY_state_plane)</code></pre>
+<ul>
+<li><p>Bringing in New York Arrest and Amenities Data</p></li>
+<li><p>Bringing in Census Data</p></li>
+<li><p>Putting in the State Plane</p></li>
+<li><p>Aggregating the data to census tracts</p></li>
+</ul>
 <pre class="r"><code>census2020 &lt;- census2020 %&gt;%
   mutate(num_arrests = lengths(st_covers(census2020, arrestdata)))
 
@@ -459,7 +293,7 @@ census2020 &lt;- census2020 %&gt;%
    mutate(allarrestssummer = lengths(st_covers(census2020, allarrests)))
 
 census2020 &lt;- census2020 %&gt;%
-  mutate(num_library = lengths(st_covers(census2020, library)))
+  mutate(num_library = lengths(st_covers(census2020, libr)))
 
 census2020 &lt;- census2020 %&gt;%
   mutate(num_POPs = lengths(st_covers(census2020, POPs)))
