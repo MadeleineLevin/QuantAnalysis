@@ -228,7 +228,7 @@ libr_hist <- ggplot(census2020) +
   geom_histogram(aes(x = num_library),
                  bins = 30)
 
-library_hist
+libr_hist
 ```
 
 # Categorical Data
