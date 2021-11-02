@@ -161,6 +161,7 @@ arrest_dev <- sd(census2020$num_arrests, na.rm = TRUE)
 totalarrest_dev<- sd(census2020$allarrestssummer, na.rm = TRUE)
 ```
 
+
 Resisting Arrests Histogram
 ```{r}
 arrest_hist <- ggplot(census2020) +
@@ -198,6 +199,35 @@ cont_summary <- tibble(
   `Standard deviation` = c(arrest_dev,
                          totalarrest_dev))
 cont_summary
+```
+
+# Calculations
+
+## Parks in NYC
+
+
+```{r}
+library_t_test <- t.test(census2020$num_library)
+
+totallibrary_t_test <-t.test(census2020$num_library)
+```
+
+```{r}
+libr_quartiles <- quantile(census2020$num_library, na.rm = TRUE)
+totallibrary_quartiles <- quantile(census2020$num_library, na.rm = TRUE)
+```
+
+```{r}
+libr_dev <- sd(census2020$num_library, na.rm = TRUE)
+totallibr_dev<- sd(census2020$num_library, na.rm = TRUE)
+```
+
+```{r}
+libr_hist <- ggplot(census2020) +
+  geom_histogram(aes(x = num_library),
+                 bins = 30)
+
+library_hist
 ```
 
 # Categorical Data
