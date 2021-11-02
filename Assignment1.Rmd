@@ -143,27 +143,61 @@ census2020 <- census2020 %>%
 
 # Calculations
 
+## Resisting Arrests between May and Sept 2020
+
 ```{r}
 arrest_t_test <- t.test(census2020$num_arrests)
-arrest_t_test
+
+totalarrest_t_test <-t.test(census2020$allarrestssummer)
 ```
 
 ```{r}
 arrest_quartiles <- quantile(census2020$num_arrests, na.rm = TRUE)
-arrest_quartiles
+totalarrest_quartiles <- quantile(census2020$allarrestssummer, na.rm = TRUE)
 ```
 
 ```{r}
-arrest_st_dev <- sd(census2020$num_arrests, na.rm = TRUE)
-arrest_st_dev
+arrest_dev <- sd(census2020$num_arrests, na.rm = TRUE)
+totalarrest_dev<- sd(census2020$allarrestssummer, na.rm = TRUE)
 ```
 
+Resisting Arrests Histogram
 ```{r}
 arrest_hist <- ggplot(census2020) +
   geom_histogram(aes(x = num_arrests),
                  bins = 30)
 
 arrest_hist
+```
+
+Total Arrests Histogram
+```{r}
+totalarrest_hist <- ggplot(census2020) +
+  geom_histogram(aes(x = allarrestssummer),
+                 bins = 30)
+
+totalarrest_hist
+```
+Table Comparing Arrests for Everything and Resisting Arrest
+```{r}
+cont_summary <- tibble(
+  Variable = c("Median resisting arrests arrests per tract", 
+               "Median total arrests per tract"),
+  `Sample mean` = c(arrest_t_test$estimate,
+                    totalarrest_t_test$estimate),
+  `Population mean (95% confidence) - low` = 
+    c(arrest_t_test$conf.int[1],
+      totalarrest_t_test$conf.int[1]),
+  `Population mean (95% confidence) - high` =
+    c(arrest_t_test$conf.int[2],
+      totalarrest_t_test$conf.int[2]),
+  Median = c(arrest_quartiles[3],
+             totalarrest_quartiles[3]),
+  `Interquartile range` = c(arrest_quartiles[4] - arrest_quartiles[2],
+                            totalarrest_quartiles[4] - totalarrest_quartiles[2]),
+  `Standard deviation` = c(arrest_dev,
+                         totalarrest_dev))
+cont_summary
 ```
 
 # Categorical Data
