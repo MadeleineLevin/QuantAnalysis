@@ -31,19 +31,16 @@ Variables
 Continuous
 
 * NYC Arrests for Summer 2020 for "Resisting Arrest"
+* All NYC Arrests in Summer 2020
 * Number of Parks
 * Number of POPS
-* Number of Subway Entrances
 * Number of Libraries
 
 Categorical
 
-* NYC Boroughs
-* Census Tracts with 
-* Libraries
-* Privately Owned Public Spaces (POPs)
-* Census 2020 Population by County
-* Census 2020 Race by County
+* NYC Borough of Arrest
+* Does the Census Tract have a Subway Station
+
 
 The arrest-level data was filtered down to "resisting arrest", an arrest description that often corresponds with protest activity. While not all arrests in this category can be tied to protests and not all protest arrests are in this category, we are using it here as a proxy for protest activity, the categories significantly filter down over 25,000 arrests over the summer months to 395 arrest rows that are more likely to be associated with protests. We used spatial processing tools to tie this data to NYC's 2,327 census tracts along with other neighborhood amenities including parks, POPS (Privately Operated Public Spaces), libraries, and subway stations.
 
@@ -67,22 +64,23 @@ library(geosphere)
 ```
 
 
-Bringing in New York Arrest Data
+* Bringing in New York Arrest and Amenities Data
 
-```{r}
+```{r, include = FALSE}
 arrestdata <-st_read("data/summer_NYC_resisting_arrest.geojson")
+allarrests <-st_read("data/summer2020arrests.geojson")
 ```
 
 
-```{r}
+```{r, include = FALSE}
 POPs <-st_read("https://data.cityofnewyork.us/resource/rvih-nhyn.geojson")
-library <-st_read("data/Library.geojson")
+libr <-st_read("data/Library.geojson")
 parks <-st_read("data/Parks.geojson")
 subway<-st_read("data/Subway.geojson")
 ```
 
-Bringing in Census Data
-```{r, message = FALSE, results = hide}
+* Bringing in Census Data
+```{r, message = FALSE, include = FALSE}
 census2020 <- get_decennial(geography = "tract",
                         year= 2020,
                         variables =c(pop= "P1_001N",
@@ -97,8 +95,8 @@ census2020 <- get_decennial(geography = "tract",
                         geometry = TRUE)
 
 ```
-
-```{r}
+* Putting in the State Plane
+```{r, include = FALSE}
 NY_state_plane <- "+proj=lcc +lat_1=41.03333333333333 +lat_2=40.66666666666666 +lat_0=40.16666666666666 +lon_0=-74 +x_0=300000.0000000001 +y_0=0 +ellps=GRS80 +datum=NAD83 +to_meter=0.3048006096012192 +no_defs "
 census2020 <-census2020 %>%
    st_transform(NY_state_plane)
@@ -106,10 +104,13 @@ census2020 <-census2020 %>%
 arrestdata <-arrestdata %>%
    st_transform(NY_state_plane)
 
+allarrests <- allarrests %>%
+   st_transform(NY_state_plane)
+
 POPs <-POPs %>%
    st_transform(NY_state_plane)
 
-library <-library %>%
+libr <-libr %>%
    st_transform(NY_state_plane)
 
 parks <-parks %>%
@@ -118,13 +119,16 @@ parks <-parks %>%
 subway <-subway %>%
    st_transform(NY_state_plane)
 ```
-
+* Aggregating the data to census tracts
 ```{r}
 census2020 <- census2020 %>%
   mutate(num_arrests = lengths(st_covers(census2020, arrestdata)))
 
 census2020 <- census2020 %>%
-  mutate(num_library = lengths(st_covers(census2020, library)))
+   mutate(allarrestssummer = lengths(st_covers(census2020, allarrests)))
+
+census2020 <- census2020 %>%
+  mutate(num_library = lengths(st_covers(census2020, libr)))
 
 census2020 <- census2020 %>%
   mutate(num_POPs = lengths(st_covers(census2020, POPs)))
@@ -157,7 +161,7 @@ arrest_st_dev
 ```{r}
 arrest_hist <- ggplot(census2020) +
   geom_histogram(aes(x = num_arrests),
-                 bins = 50)
+                 bins = 30)
 
 arrest_hist
 ```
