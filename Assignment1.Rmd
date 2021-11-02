@@ -207,9 +207,9 @@ cont_summary
 
 
 ```{r}
-library_t_test <- t.test(census2020$num_library)
+libr_t_test <- t.test(census2020$num_library)
 
-totallibrary_t_test <-t.test(census2020$num_library)
+totallibr_t_test <-t.test(census2020$num_library)
 ```
 
 ```{r}
