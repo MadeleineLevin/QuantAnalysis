@@ -34,23 +34,23 @@ Continuous
 * All NYC Arrests in Summer 2020
 * Number of Parks
 * Number of POPS
-* Number of Libraries
 
 Categorical
 
 * NYC Borough of Arrest
 * Does the Census Tract have a Subway Station
+* Does the Census Tract have a Library
 
 
 The arrest-level data was filtered down to "resisting arrest", an arrest description that often corresponds with protest activity. While not all arrests in this category can be tied to protests and not all protest arrests are in this category, we are using it here as a proxy for protest activity, the categories significantly filter down over 25,000 arrests over the summer months to 395 arrest rows that are more likely to be associated with protests. We used spatial processing tools to tie this data to NYC's 2,327 census tracts along with other neighborhood amenities including parks, POPS (Privately Operated Public Spaces), libraries, and subway stations.
 
-Arrest Descriptions Used as Proxy for Protest Arrests:
+Arrest Description Used as Proxy for Protest Arrests:
 
 * OFFENSES AGAINST PUBLIC ADMININISTRATION (RESISTING ARREST)
 
 ## Load data
 
-```{r setup, warning = FALSE, message = FALSE, echo = FALSE, include=FALSE}
+```{r, include=FALSE}
 library(tidyverse)
 library(tidycensus)
 library(readxl)
@@ -142,7 +142,7 @@ census2020 <- census2020 %>%
 
 ```
 
-# Calculations
+# Calculations -Assignment 2
 
 ## Resisting Arrests between May and Sept 2020
 
@@ -199,13 +199,9 @@ cont_summary <- tibble(
                             totalarrest_quartiles[4] - totalarrest_quartiles[2]),
   `Standard deviation` = c(arrest_dev,
                          totalarrest_dev))
-cont_summary
+kable(cont_summary, digits = 0)
 ```
-
-# Calculations
-
 ## Parks in NYC
-
 
 ```{r}
 libr_t_test <- t.test(census2020$num_library)
@@ -231,7 +227,7 @@ libr_hist <- ggplot(census2020) +
 libr_hist
 ```
 
-# Categorical Data
+# Categorical Data- Assignment 2
 
 ```{r}
 pct_Queens<- t.test(arrestdata$arrest_boro == "Q")
@@ -287,6 +283,52 @@ ggplot(PCT_summary_arrests) +
 
 
 ```
+
+# Bivariate Analysis - Assignment 3
+
+Our dependent variable is the number of arrests made per census tract in New York City for "Resisting Arrest" in Summer 2020. Our independent variables are total number of arrests in the census tract for the same time period, population, number of parks, number of subway stations, and presence of a library or POPS.
+
+## Correlations and Regressions (Continuous Variables)
+
+### Total Number of Arrests
+
+```{r}
+cor.test(~ census2020$num_arrests + census2020$allarrestssummer, census2020 = census2020)
+```
+
+Tracts with a higher number of arrests overall are associated with a higher number of arrests for resisting arrest.
+
+### Population
+
+```{r}
+cor.test(~ census2020$num_arrests + census2020$pop, census2020 = census2020)
+```
+Tracts with a higher population are associated with a higher number of arrests for resisting arrest.
+
+### Number of Parks 
+
+### Number of Subway Stations
+
+## Difference in means (Categorical Variables)
+
+### Presence of a POP
+```{r}
+census2020 <- census2020 %>%
+  mutate(POPS_true = case_when(census2020$num_POPs == 0 ~ "False",                                
+                               census2020$num_POPs== 1 ~ "True",
+                               census2020$num_POPs== 2 ~ "True",
+                               census2020$num_POPs== 3 ~ "True",
+                               census2020$num_POPs== 4 ~ "True",
+                               census2020$num_POPs== 5 ~ "True",
+                               census2020$num_POPs== 6 ~ "True"))
+t.test(census2020$num_arrests ~ census2020$POPS_true, census2020)
+```
+The p value is less than .05 and confidence interval stays below zero, meaning there is a relationship between presence of a POP and Resisting Arrest charges. 
+
+### Presence of a Library
+
+
+
 
 # References
 
