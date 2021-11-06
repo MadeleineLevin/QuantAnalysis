@@ -61,6 +61,7 @@ library(ggspatial)
 library(units)
 library(nngeo)
 library(geosphere)
+library(gridExtra)
 ```
 
 
@@ -161,6 +162,7 @@ arrest_dev <- sd(census2020$num_arrests, na.rm = TRUE)
 totalarrest_dev<- sd(census2020$allarrestssummer, na.rm = TRUE)
 ```
 
+
 Resisting Arrests Histogram
 ```{r}
 arrest_hist <- ggplot(census2020) +
@@ -200,12 +202,91 @@ cont_summary <- tibble(
 cont_summary
 ```
 
-# Categorical Data
+# Calculations
+
+## Parks in NYC
+
+
 ```{r}
-pct_Queens<- t.test(arrestdata$arrest_boro == "Q")
-pct_Queens
+libr_t_test <- t.test(census2020$num_library)
+
+totallibr_t_test <-t.test(census2020$num_library)
 ```
 
+```{r}
+libr_quartiles <- quantile(census2020$num_library, na.rm = TRUE)
+totallibrary_quartiles <- quantile(census2020$num_library, na.rm = TRUE)
+```
+
+```{r}
+libr_dev <- sd(census2020$num_library, na.rm = TRUE)
+totallibr_dev<- sd(census2020$num_library, na.rm = TRUE)
+```
+
+```{r}
+libr_hist <- ggplot(census2020) +
+  geom_histogram(aes(x = num_library),
+                 bins = 30)
+
+libr_hist
+```
+
+# Categorical Data
+
+```{r}
+pct_Queens<- t.test(arrestdata$arrest_boro == "Q")
+pct_Brooklyn <-t.test(arrestdata$arrest_boro == "K")
+pct_StatenIsland <-t.test(arrestdata$arrest_boro == "S")
+pct_Manhattan <-t.test(arrestdata$arrest_boro == "M")
+pct_Bronx <-t.test(arrestdata$arrest_boro == "B")
+```
+
+
+```{r}
+PCT_summary_arrests <- tibble(`Percent of Protest Arrests in Each NYC Borough, Summer 2020` =
+                            c("Bronx","Brooklyn",
+                                "Queens","Manhattan", "Staten Island"),
+                            `Sample proportion` = 
+                              c(pct_Bronx$estimate * 100,
+                                pct_Brooklyn$estimate *100,
+                                pct_Queens$estimate *100,
+                                pct_Manhattan$estimate *100,
+                                pct_StatenIsland$estimate *100),
+                            `95-percent confidence - low` = 
+                              c(pct_Bronx$conf.int[1] * 100,
+                                pct_Brooklyn$conf.int[1] * 100,
+                                pct_Queens$conf.int[1] *100,
+                            pct_Manhattan$conf.int[1] *100,
+                            pct_StatenIsland$conf.int[1] *100),
+               
+                            `95-percent confidence - high` = 
+                              c(pct_Bronx$conf.int[2] * 100,
+                                pct_Brooklyn$conf.int[2] * 100,
+                                pct_Queens$conf.int[2]*100, 
+                                pct_Manhattan$conf.int[2]*100,
+                                pct_StatenIsland$conf.int[2]*100))
+
+kable(PCT_summary_arrests, digits = 0)
+```
+
+
+```{r}
+ggplot(PCT_summary_arrests) +
+  geom_bar(aes(x = `Percent of Protest Arrests in Each NYC Borough, Summer 2020`, 
+               y = `Sample proportion`),
+           stat = "identity") +
+  geom_errorbar(aes(x = `Percent of Protest Arrests in Each NYC Borough, Summer 2020`, 
+               y = `Sample proportion`,
+               ymin = `95-percent confidence - low`,
+               ymax = `95-percent confidence - high`),
+           stat = "identity") +
+  scale_y_continuous(name = "Percent of total protest arrests",
+                     breaks = c(0, 20, 40, 60, 80),
+                     labels = c("0", "10%", "20%", "30%", "40%")) +
+  theme_bw()
+
+
+```
 
 # References
 
