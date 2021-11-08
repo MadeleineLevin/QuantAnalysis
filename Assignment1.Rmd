@@ -201,7 +201,7 @@ cont_summary <- tibble(
                          totalarrest_dev))
 kable(cont_summary, digits = 0)
 ```
-## Parks in NYC
+## Libraries in NYC
 
 ```{r}
 libr_t_test <- t.test(census2020$num_library)
@@ -226,7 +226,56 @@ libr_hist <- ggplot(census2020) +
 
 libr_hist
 ```
+## Parks in NYC
 
+```{r}
+parks_t_test <- t.test(census2020$num_parks)
+
+totalparks_t_test <-t.test(census2020$num_parks)
+```
+
+```{r}
+parks_quartiles <- quantile(census2020$num_parks, na.rm = TRUE)
+totalparks_quartiles <- quantile(census2020$num_parks, na.rm = TRUE)
+```
+
+```{r}
+parks_dev <- sd(census2020$num_parks, na.rm = TRUE)
+totalparks_dev<- sd(census2020$num_parks, na.rm = TRUE)
+```
+
+```{r}
+parks_hist <- ggplot(census2020) +
+  geom_histogram(aes(x = num_parks),
+                 bins = 30)
+
+parks_hist
+```
+## Subway Stations in NYC
+
+```{r}
+subway_t_test <- t.test(census2020$num_subway)
+
+totalsubway_t_test <-t.test(census2020$num_subway)
+```
+
+```{r}
+subway_quartiles <- quantile(census2020$num_subway, na.rm = TRUE)
+totalsubway_quartiles <- quantile(census2020$num_subway, na.rm = TRUE)
+```
+
+```{r}
+subway_dev <- sd(census2020$num_subway, na.rm = TRUE)
+totalsubway_dev<- sd(census2020$num_subway, na.rm = TRUE)
+```
+
+```{r}
+subway_hist <- ggplot(census2020) +
+  geom_histogram(aes(x = num_subway),
+                 bins = 30)
+
+subway_hist
+```
 # Categorical Data- Assignment 2
 
 ```{r}
@@ -307,7 +356,27 @@ Tracts with a higher population are associated with a higher number of arrests f
 
 ### Number of Parks 
 
+```{r}
+cor.test(~ census2020$num_arrests + census2020$num_parks, census2020 = census2020)
+```
+Tracts with a higher numbers of parks are associated with a higher number of arrests for resisting arrest.
+
 ### Number of Subway Stations
+
+```{r}
+cor.test(~ census2020$num_arrests + census2020$num_subway, census2020 = census2020)
+```
+Tracts with a higher numbers of subways stations are associated with a higher number of arrests for resisting arrest.
+
+### Number of Libraries
+
+```{r}
+cor.test(~ census2020$num_arrests + census2020$num_library, census2020 = census2020)
+```
+Tracts with a higher numbers of libraries are associated with a higher number of arrests for resisting arrest.
+
+```
+
 
 ## Difference in means (Categorical Variables)
 
