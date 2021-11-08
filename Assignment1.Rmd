@@ -354,6 +354,8 @@ cor.test(~ census2020$num_arrests + census2020$pop, census2020 = census2020)
 ```
 Tracts with a higher population are associated with a higher number of arrests for resisting arrest.
 
+The magnitude of the relationship is a correlation of .1 and the significance is a 95% confidence interval between .06 and .14. 
+
 ### Number of Parks 
 
 ```{r}
@@ -375,7 +377,7 @@ cor.test(~ census2020$num_arrests + census2020$num_library, census2020 = census2
 ```
 Tracts with a higher numbers of libraries are associated with a higher number of arrests for resisting arrest.
 
-```
+
 
 
 ## Difference in means (Categorical Variables)
@@ -393,6 +395,9 @@ census2020 <- census2020 %>%
 t.test(census2020$num_arrests ~ census2020$POPS_true, census2020)
 ```
 The p value is less than .05 and confidence interval stays below zero, meaning there is a relationship between presence of a POP and Resisting Arrest charges. 
+
+The magnitude of the relationship is a difference in mean number of Resisting Arrests in tracts with a POP. In Tracts with a POP the mean was .467 and in tracts without the mean was .150 representing a difference of .317.  The significance is a 95% confidence interval between -.57 and -.059.
+
 
 ### Presence of a Library
 
