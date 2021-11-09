@@ -401,6 +401,15 @@ The magnitude of the relationship is a difference in mean number of Resisting Ar
 
 ### Presence of a Library
 
+```{r}
+census2020 <- census2020 %>%
+  mutate(library_true = case_when(census2020$num_library == 0 ~ "False",                                
+                               census2020$num_library== 1 ~ "True",
+                               census2020$num_library== 2 ~ "True"))
+                              
+t.test(census2020$num_arrests ~ census2020$library_true, census2020)
+```
+The p value is over 0.05 and the confidence interval includes 0, meaning there is little to no correlation between the presence of libraries and Resisting Arrest charges. 
 
 
 
