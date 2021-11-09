@@ -623,21 +623,34 @@ kable(PCT_summary_arrests, digits = 0)</code></pre>
                                census2020$num_POPs== 3 ~ &quot;True&quot;,
                                census2020$num_POPs== 4 ~ &quot;True&quot;,
                                census2020$num_POPs== 5 ~ &quot;True&quot;,
-                               census2020$num_POPs== 6 ~ &quot;True&quot;))
+                               census2020$num_POPs== 6 ~ &quot;True&quot;,
+                               census2020$num_POPs== 7 ~ &quot;True&quot;,
+                               census2020$num_POPs== 8 ~ &quot;True&quot;,
+                               census2020$num_POPs== 9 ~ &quot;True&quot;,
+                               census2020$num_POPs== 10 ~ &quot;True&quot;,
+                               census2020$num_POPs== 11 ~ &quot;True&quot;,
+                               census2020$num_POPs== 12 ~ &quot;True&quot;,
+                               census2020$num_POPs== 13 ~ &quot;True&quot;,
+                               census2020$num_POPs== 14 ~ &quot;True&quot;))
 t.test(census2020$num_arrests ~ census2020$POPS_true, census2020)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
 ## 
 ## data:  census2020$num_arrests by census2020$POPS_true
+<<<<<<< HEAD
 ## t = -2.4355, df = 120.6, p-value = 0.01633
 ## alternative hypothesis: true difference in means between group False and group True is not equal to 0
+=======
+## t = -2.6436, df = 133.75, p-value = 0.009182
+## alternative hypothesis: true difference in means is not equal to 0
+>>>>>>> 045b16ba2391279c97083da90371df64c5e9a98f
 ## 95 percent confidence interval:
-##  -0.57416602 -0.05925847
+##  -0.60536258 -0.08720978
 ## sample estimates:
 ## mean in group False  mean in group True 
-##           0.1499544           0.4666667</code></pre>
+##           0.1499544           0.4962406</code></pre>
 <p>The p value is less than .05 and confidence interval stays below zero, meaning there is a relationship between presence of a POP and Resisting Arrest charges.</p>
-<p>The magnitude of the relationship is a difference in mean number of Resisting Arrests in tracts with a POP. In Tracts with a POP the mean was .467 and in tracts without the mean was .150 representing a difference of .317. The significance is a 95% confidence interval between -.57 and -.059.</p>
+<p>The magnitude of the relationship is a difference in mean number of Resisting Arrests in tracts with a POP. In Tracts with a POP the mean Resisting Arrests number was .496 and in tracts without the mean was .150 representing a difference of .347. The significance is a 95% confidence interval between -.6 and -.08.</p>
 </div>
 <div id="presence-of-a-library" class="section level3">
 <h3>Presence of a Library</h3>

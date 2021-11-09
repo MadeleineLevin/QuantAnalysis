@@ -391,12 +391,20 @@ census2020 <- census2020 %>%
                                census2020$num_POPs== 3 ~ "True",
                                census2020$num_POPs== 4 ~ "True",
                                census2020$num_POPs== 5 ~ "True",
-                               census2020$num_POPs== 6 ~ "True"))
+                               census2020$num_POPs== 6 ~ "True",
+                               census2020$num_POPs== 7 ~ "True",
+                               census2020$num_POPs== 8 ~ "True",
+                               census2020$num_POPs== 9 ~ "True",
+                               census2020$num_POPs== 10 ~ "True",
+                               census2020$num_POPs== 11 ~ "True",
+                               census2020$num_POPs== 12 ~ "True",
+                               census2020$num_POPs== 13 ~ "True",
+                               census2020$num_POPs== 14 ~ "True"))
 t.test(census2020$num_arrests ~ census2020$POPS_true, census2020)
 ```
 The p value is less than .05 and confidence interval stays below zero, meaning there is a relationship between presence of a POP and Resisting Arrest charges. 
 
-The magnitude of the relationship is a difference in mean number of Resisting Arrests in tracts with a POP. In Tracts with a POP the mean was .467 and in tracts without the mean was .150 representing a difference of .317.  The significance is a 95% confidence interval between -.57 and -.059.
+The magnitude of the relationship is a difference in mean number of Resisting Arrests in tracts with a POP. In Tracts with a POP the mean Resisting Arrests number was .496 and in tracts without the mean was .150 representing a difference of .347.  The significance is a 95% confidence interval between -.6 and -.08.
 
 
 ### Presence of a Library
