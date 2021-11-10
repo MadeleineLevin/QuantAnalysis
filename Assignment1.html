@@ -544,7 +544,7 @@ kable(PCT_summary_arrests, digits = 0)</code></pre>
 ## sample estimates:
 ##       cor 
 ## 0.2705539</code></pre>
-<p>Tracts with a higher number of arrests overall are associated with a higher number of arrests for resisting arrest.</p>
+<p>Tracts with a higher number of arrests overall are associated with a higher number of arrests for resisting arrest. The correlation is .27 (and the 95% confidence interval does not cover 0 + p-value is less than .05)</p>
 </div>
 <div id="population" class="section level3">
 <h3>Population</h3>
@@ -577,7 +577,7 @@ kable(PCT_summary_arrests, digits = 0)</code></pre>
 ## sample estimates:
 ##        cor 
 ## 0.03047881</code></pre>
-<p>Tracts with a higher numbers of parks are associated with a higher number of arrests for resisting arrest.</p>
+<p>Tracts with a higher numbers of parks are associated with a higher number of arrests for resisting arrest–however the confidence interval includes 0, which means the correlation is not proven.</p>
 </div>
 <div id="number-of-subway-stations" class="section level3">
 <h3>Number of Subway Stations</h3>
@@ -593,7 +593,7 @@ kable(PCT_summary_arrests, digits = 0)</code></pre>
 ## sample estimates:
 ##       cor 
 ## 0.3185731</code></pre>
-<p>Tracts with a higher numbers of subways stations are associated with a higher number of arrests for resisting arrest.</p>
+<p>Tracts with a higher numbers of subways stations are associated with a higher number of arrests for resisting arrest. The correlation is .32 (and the confidence interval/p-value allow for confidence in this correlation.)</p>
 </div>
 <div id="number-of-libraries" class="section level3">
 <h3>Number of Libraries</h3>
@@ -609,7 +609,7 @@ kable(PCT_summary_arrests, digits = 0)</code></pre>
 ## sample estimates:
 ##        cor 
 ## 0.03207296</code></pre>
-<p>Tracts with a higher numbers of libraries are associated with a higher number of arrests for resisting arrest.</p>
+<p>Tracts with a higher numbers of libraries are associated with a higher number of arrests for resisting arrest. However, the p-value and confidence interval show that this correlation is not proven.</p>
 </div>
 </div>
 <div id="difference-in-means-categorical-variables" class="section level2">
@@ -637,13 +637,8 @@ t.test(census2020$num_arrests ~ census2020$POPS_true, census2020)</code></pre>
 ##  Welch Two Sample t-test
 ## 
 ## data:  census2020$num_arrests by census2020$POPS_true
-<<<<<<< HEAD
-## t = -2.4355, df = 120.6, p-value = 0.01633
-## alternative hypothesis: true difference in means between group False and group True is not equal to 0
-=======
 ## t = -2.6436, df = 133.75, p-value = 0.009182
 ## alternative hypothesis: true difference in means is not equal to 0
->>>>>>> 045b16ba2391279c97083da90371df64c5e9a98f
 ## 95 percent confidence interval:
 ##  -0.60536258 -0.08720978
 ## sample estimates:
@@ -654,7 +649,65 @@ t.test(census2020$num_arrests ~ census2020$POPS_true, census2020)</code></pre>
 </div>
 <div id="presence-of-a-library" class="section level3">
 <h3>Presence of a Library</h3>
+<pre class="r"><code>census2020 &lt;- census2020 %&gt;%
+  mutate(library_true = case_when(census2020$num_library == 0 ~ &quot;False&quot;,                                
+                               census2020$num_library== 1 ~ &quot;True&quot;,
+                               census2020$num_library== 2 ~ &quot;True&quot;))
+                              
+t.test(census2020$num_arrests ~ census2020$library_true, census2020)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  census2020$num_arrests by census2020$library_true
+## t = -1.6383, df = 256.41, p-value = 0.1026
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.15754108  0.01445297
+## sample estimates:
+## mean in group False  mean in group True 
+##           0.1631977           0.2347418</code></pre>
+<p>The p value is over 0.05 and the confidence interval includes 0, meaning there is little to no correlation between the presence of libraries and Resisting Arrest charges.</p>
 </div>
+</div>
+</div>
+<div id="multivariate-regression--assignment-4" class="section level1">
+<h1>Multivariate Regression- Assignment 4:</h1>
+<div id="summary-of-bivariate-analysis-from-prior-assignment" class="section level2">
+<h2>Summary of Bivariate Analysis from prior assignment:</h2>
+<p>The greatest correlation with a p-value under .05 and a 95% confidence interval that does not include zero is between resisting arrest charges and another continuous variable is the presence of subway stations at .32. The more subway stations in a census tract, the more arrests for resisting arrest. Other continuous variables that showed correlation within 95% confidence are number of total arrests (the more total arrests, the more charges for resisting arrest) and total population (more population in a tract, more charges for resisting arrest). The presence of parks or libraries did not have significant correlation on the number of resisting arrest charges.</p>
+<p>For categorical variables, the presence of at least one POP showed correlation with a higher number of resisting arrest charges and the presence of at least one Library did not show correlation.</p>
+</div>
+<div id="multivariate-calculations" class="section level2">
+<h2>Multivariate Calculations</h2>
+<pre class="r"><code>full_model &lt;- lm(census2020$num_arrests ~ census2020$allarrestssummer + census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true, census2020)
+
+summary(full_model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = census2020$num_arrests ~ census2020$allarrestssummer + 
+##     census2020$num_parks + census2020$pop + census2020$num_subway + 
+##     census2020$POPS_true + census2020$library_true, data = census2020)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.0505 -0.1418 -0.0637 -0.0367  8.2220 
+## 
+## Coefficients:
+##                               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                  7.482e-03  2.492e-02   0.300    0.764    
+## census2020$allarrestssummer  3.662e-03  3.309e-04  11.064   &lt;2e-16 ***
+## census2020$num_parks         5.852e-04  9.120e-04   0.642    0.521    
+## census2020$pop               7.738e-06  5.875e-06   1.317    0.188    
+## census2020$num_subway        8.350e-02  6.348e-03  13.153   &lt;2e-16 ***
+## census2020$POPS_trueTrue     2.013e-03  5.461e-02   0.037    0.971    
+## census2020$library_trueTrue -5.063e-03  4.068e-02  -0.124    0.901    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.5598 on 2320 degrees of freedom
+## Multiple R-squared:  0.1505, Adjusted R-squared:  0.1483 
+## F-statistic: 68.49 on 6 and 2320 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>##Summary of results of Multivariate Analysis</p>
 </div>
 </div>
 <div id="references" class="section level1">

@@ -345,7 +345,7 @@ Our dependent variable is the number of arrests made per census tract in New Yor
 cor.test(~ census2020$num_arrests + census2020$allarrestssummer, census2020 = census2020)
 ```
 
-Tracts with a higher number of arrests overall are associated with a higher number of arrests for resisting arrest.
+Tracts with a higher number of arrests overall are associated with a higher number of arrests for resisting arrest. The correlation is .27 (and the 95% confidence interval does not cover 0 + p-value is less than .05)
 
 ### Population
 
@@ -361,23 +361,21 @@ The magnitude of the relationship is a correlation of .1 and the significance is
 ```{r}
 cor.test(~ census2020$num_arrests + census2020$num_parks, census2020 = census2020)
 ```
-Tracts with a higher numbers of parks are associated with a higher number of arrests for resisting arrest.
+Tracts with a higher numbers of parks are associated with a higher number of arrests for resisting arrest--however the confidence interval includes 0, which means the correlation is not proven.
 
 ### Number of Subway Stations
 
 ```{r}
 cor.test(~ census2020$num_arrests + census2020$num_subway, census2020 = census2020)
 ```
-Tracts with a higher numbers of subways stations are associated with a higher number of arrests for resisting arrest.
+Tracts with a higher numbers of subways stations are associated with a higher number of arrests for resisting arrest. The correlation is .32 (and the confidence interval/p-value allow for confidence in this correlation.)
 
 ### Number of Libraries
 
 ```{r}
 cor.test(~ census2020$num_arrests + census2020$num_library, census2020 = census2020)
 ```
-Tracts with a higher numbers of libraries are associated with a higher number of arrests for resisting arrest.
-
-
+Tracts with a higher numbers of libraries are associated with a higher number of arrests for resisting arrest. However, the p-value and confidence interval show that this correlation is not proven.
 
 
 ## Difference in means (Categorical Variables)
@@ -420,6 +418,22 @@ t.test(census2020$num_arrests ~ census2020$library_true, census2020)
 The p value is over 0.05 and the confidence interval includes 0, meaning there is little to no correlation between the presence of libraries and Resisting Arrest charges. 
 
 
+# Multivariate Regression- Assignment 4:
+
+## Summary of Bivariate Analysis from prior assignment:
+
+The greatest correlation with a p-value under .05 and a 95% confidence interval that does not include zero is between resisting arrest charges and another continuous variable is the presence of subway stations at .32. The more subway stations in a census tract, the more arrests for resisting arrest. Other continuous variables that showed correlation within 95% confidence are number of total arrests (the more total arrests, the more charges for resisting arrest) and total population (more population in a tract, more charges for resisting arrest). The presence of parks or libraries did not have significant correlation on the number of resisting arrest charges.
+
+For categorical variables, the presence of at least one POP showed correlation with a higher number of resisting arrest charges and the presence of at least one Library did not show correlation.
+
+## Multivariate Calculations
+```{r}
+full_model <- lm(census2020$num_arrests ~ census2020$allarrestssummer + census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true, census2020)
+
+summary(full_model)
+```
+
+##Summary of results of Multivariate Analysis
 
 # References
 
