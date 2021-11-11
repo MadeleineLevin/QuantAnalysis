@@ -672,11 +672,6 @@ t.test(census2020$num_arrests ~ census2020$library_true, census2020)</code></pre
 </div>
 <div id="multivariate-regression--assignment-4" class="section level1">
 <h1>Multivariate Regression- Assignment 4:</h1>
-<div id="summary-of-bivariate-analysis-from-prior-assignment" class="section level2">
-<h2>Summary of Bivariate Analysis from prior assignment:</h2>
-<p>The greatest correlation with a p-value under .05 and a 95% confidence interval that does not include zero is between resisting arrest charges and another continuous variable is the presence of subway stations at .32. The more subway stations in a census tract, the more arrests for resisting arrest. Other continuous variables that showed correlation within 95% confidence are number of total arrests (the more total arrests, the more charges for resisting arrest) and total population (more population in a tract, more charges for resisting arrest). The presence of parks or libraries did not have significant correlation on the number of resisting arrest charges.</p>
-<p>For categorical variables, the presence of at least one POP showed correlation with a higher number of resisting arrest charges and the presence of at least one Library did not show correlation.</p>
-</div>
 <div id="multivariate-calculations" class="section level2">
 <h2>Multivariate Calculations</h2>
 <pre class="r"><code>full_model &lt;- lm(census2020$num_arrests ~ census2020$allarrestssummer + census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true, census2020)
@@ -707,7 +702,13 @@ summary(full_model)</code></pre>
 ## Residual standard error: 0.5598 on 2320 degrees of freedom
 ## Multiple R-squared:  0.1505, Adjusted R-squared:  0.1483 
 ## F-statistic: 68.49 on 6 and 2320 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>##Summary of results of Multivariate Analysis</p>
+</div>
+<div id="summary-of-analysis" class="section level2">
+<h2>Summary of Analysis</h2>
+<p>The greatest correlation with a p-value under .05 and a 95% confidence interval that does not include zero is between resisting arrest charges and another continuous variable is the presence of subway stations at .32. The more subway stations in a census tract, the more arrests for resisting arrest. Other continuous variables that showed correlation within 95% confidence are number of total arrests (the more total arrests, the more charges for resisting arrest) and total population (more population in a tract, more charges for resisting arrest). The presence of parks or libraries did not have significant correlation on the number of resisting arrest charges.</p>
+<p>For categorical variables, the presence of at least one POP showed correlation with a higher number of resisting arrest charges and the presence of at least one Library did not show correlation.</p>
+<p>The multivariate analysis shows that when controlling for all other variables, only the total number of arrests and number of subway stations in a census tract have an impact on the number of resisting arrest charges (because their p-values are less than .05). Subway stations, in our bivariate analysis, already had the strongest correlation and total number of arrests was close behind. However, the difference between one and two subway stations in a neighborhood is much bigger than the difference between one or two arrests, so understanding the context of the variables is important.</p>
+<p>Our R-Squared value for this regression is .15, suggesting that this model explains about 15% of Resisting Arrest charges in NYC in Summer 2020.</p>
 </div>
 </div>
 <div id="references" class="section level1">
