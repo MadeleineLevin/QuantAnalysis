@@ -702,6 +702,33 @@ summary(full_model)</code></pre>
 ## Residual standard error: 0.5598 on 2320 degrees of freedom
 ## Multiple R-squared:  0.1505, Adjusted R-squared:  0.1483 
 ## F-statistic: 68.49 on 6 and 2320 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>full_model2 &lt;- lm(census2020$num_arrests ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true, census2020)
+
+summary(full_model2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = census2020$num_arrests ~ census2020$num_parks + 
+##     census2020$pop + census2020$num_subway + census2020$POPS_true + 
+##     census2020$library_true, data = census2020)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.1962 -0.1552 -0.0892 -0.0569  8.4304 
+## 
+## Coefficients:
+##                              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                 1.851e-02  2.554e-02   0.725  0.46864    
+## census2020$num_parks        9.427e-04  9.349e-04   1.008  0.31340    
+## census2020$pop              1.832e-05  5.946e-06   3.081  0.00209 ** 
+## census2020$num_subway       9.254e-02  6.458e-03  14.330  &lt; 2e-16 ***
+## census2020$POPS_trueTrue    1.094e-02  5.601e-02   0.195  0.84519    
+## census2020$library_trueTrue 5.892e-07  4.173e-02   0.000  0.99999    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.5743 on 2321 degrees of freedom
+## Multiple R-squared:  0.1057, Adjusted R-squared:  0.1037 
+## F-statistic: 54.84 on 5 and 2321 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <div id="summary-of-analysis" class="section level2">
 <h2>Summary of Analysis</h2>
@@ -709,6 +736,7 @@ summary(full_model)</code></pre>
 <p>For categorical variables, the presence of at least one POP showed correlation with a higher number of resisting arrest charges and the presence of at least one Library did not show correlation.</p>
 <p>The multivariate analysis shows that when controlling for all other variables, only the total number of arrests and number of subway stations in a census tract have an impact on the number of resisting arrest charges (because their p-values are less than .05). Subway stations, in our bivariate analysis, already had the strongest correlation and total number of arrests was close behind. However, the difference between one and two subway stations in a neighborhood is much bigger than the difference between one or two arrests, so understanding the context of the variables is important.</p>
 <p>Our R-Squared value for this regression is .15, suggesting that this model explains about 15% of Resisting Arrest charges in NYC in Summer 2020.</p>
+<p>However, when we run the multivariate analysis again without including the total arrests dataset (which includes the resisting arrests and thus will have a correlation) the number of POPS in a census tract also has a statistically significant relationship with the number of resisting arrest charges.</p>
 </div>
 </div>
 <div id="references" class="section level1">
