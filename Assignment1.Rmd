@@ -78,6 +78,9 @@ POPs <-st_read("https://data.cityofnewyork.us/resource/rvih-nhyn.geojson")
 libr <-st_read("data/Library.geojson")
 parks <-st_read("data/Parks.geojson")
 subway<-st_read("data/Subway.geojson")
+historic <-st_read("data/HistoricBuildings.geojson")
+museum <-st_read("data/Museums.geojson")
+wifi <-st_read("data/WifiHotspot.geojson")
 ```
 
 * Bringing in Census Data
@@ -119,6 +122,15 @@ parks <-parks %>%
 
 subway <-subway %>%
    st_transform(NY_state_plane)
+
+historic <-historic %>%
+   st_transform(NY_state_plane)
+
+museum <-museum %>%
+   st_transform(NY_state_plane)
+
+wifi <-wifi %>%
+   st_transform(NY_state_plane)
 ```
 * Aggregating the data to census tracts
 ```{r}
@@ -139,6 +151,15 @@ census2020 <- census2020 %>%
 
 census2020 <- census2020 %>%
   mutate(num_subway = lengths(st_covers(census2020, subway)))
+
+census2020 <- census2020 %>%
+  mutate(num_historic = lengths(st_covers(census2020, historic)))
+
+census2020 <- census2020 %>%
+  mutate(num_museum = lengths(st_covers(census2020, museum)))
+
+census2020 <- census2020 %>%
+  mutate(num_wifi = lengths(st_covers(census2020, wifi)))
 
 ```
 
@@ -378,6 +399,25 @@ cor.test(~ census2020$num_arrests + census2020$num_library, census2020 = census2
 Tracts with a higher numbers of libraries are associated with a higher number of arrests for resisting arrest. However, the p-value and confidence interval show that this correlation is not proven.
 
 
+### Number of Wifi Hotspots
+
+```{r}
+cor.test(~ census2020$num_arrests + census2020$num_wifi, census2020 = census2020)
+```
+
+### Number of Museums
+
+```{r}
+cor.test(~ census2020$num_arrests + census2020$num_museum, census2020 = census2020)
+```
+
+### Number of Historic Buildings
+
+```{r}
+cor.test(~ census2020$num_arrests + census2020$num_historic, census2020 = census2020)
+```
+
+
 ## Difference in means (Categorical Variables)
 
 ### Presence of a POP
@@ -433,6 +473,13 @@ summary(full_model)
 full_model2 <- lm(census2020$num_arrests ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true, census2020)
 
 summary(full_model2)
+```
+
+### Putting in new variables (wifi, museums, historic buildings)
+```{r}
+full_model3 <- lm(census2020$num_arrests ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true + census2020$num_wifi +  census2020$num_museum + census2020$num_historic,census2020)
+
+summary(full_model3)
 ```
 
 ## Summary of Analysis

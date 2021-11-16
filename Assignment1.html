@@ -302,7 +302,16 @@ census2020 &lt;- census2020 %&gt;%
   mutate(num_parks = lengths(st_covers(census2020, parks)))
 
 census2020 &lt;- census2020 %&gt;%
-  mutate(num_subway = lengths(st_covers(census2020, subway)))</code></pre>
+  mutate(num_subway = lengths(st_covers(census2020, subway)))
+
+census2020 &lt;- census2020 %&gt;%
+  mutate(num_historic = lengths(st_covers(census2020, historic)))
+
+census2020 &lt;- census2020 %&gt;%
+  mutate(num_museum = lengths(st_covers(census2020, museum)))
+
+census2020 &lt;- census2020 %&gt;%
+  mutate(num_wifi = lengths(st_covers(census2020, wifi)))</code></pre>
 </div>
 </div>
 <div id="calculations--assignment-2" class="section level1">
@@ -611,6 +620,51 @@ kable(PCT_summary_arrests, digits = 0)</code></pre>
 ## 0.03207296</code></pre>
 <p>Tracts with a higher numbers of libraries are associated with a higher number of arrests for resisting arrest. However, the p-value and confidence interval show that this correlation is not proven.</p>
 </div>
+<div id="number-of-wifi-hotspots" class="section level3">
+<h3>Number of Wifi Hotspots</h3>
+<pre class="r"><code>cor.test(~ census2020$num_arrests + census2020$num_wifi, census2020 = census2020)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  census2020$num_arrests and census2020$num_wifi
+## t = 9.9513, df = 2325, p-value &lt; 2.2e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.1628244 0.2407779
+## sample estimates:
+##       cor 
+## 0.2021213</code></pre>
+</div>
+<div id="number-of-museums" class="section level3">
+<h3>Number of Museums</h3>
+<pre class="r"><code>cor.test(~ census2020$num_arrests + census2020$num_museum, census2020 = census2020)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  census2020$num_arrests and census2020$num_museum
+## t = 4.1215, df = 2325, p-value = 3.896e-05
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.0446861 0.1253658
+## sample estimates:
+##        cor 
+## 0.08516558</code></pre>
+</div>
+<div id="number-of-historic-buildings" class="section level3">
+<h3>Number of Historic Buildings</h3>
+<pre class="r"><code>cor.test(~ census2020$num_arrests + census2020$num_historic, census2020 = census2020)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  census2020$num_arrests and census2020$num_historic
+## t = 4.8904, df = 2325, p-value = 1.075e-06
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.06051816 0.14096031
+## sample estimates:
+##       cor 
+## 0.1009041</code></pre>
+</div>
 </div>
 <div id="difference-in-means-categorical-variables" class="section level2">
 <h2>Difference in means (Categorical Variables)</h2>
@@ -729,6 +783,40 @@ summary(full_model2)</code></pre>
 ## Residual standard error: 0.5743 on 2321 degrees of freedom
 ## Multiple R-squared:  0.1057, Adjusted R-squared:  0.1037 
 ## F-statistic: 54.84 on 5 and 2321 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div id="putting-in-new-variables-wifi-museums-historic-buildings" class="section level3">
+<h3>Putting in new variables (wifi, museums, historic buildings)</h3>
+<pre class="r"><code>full_model3 &lt;- lm(census2020$num_arrests ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true + census2020$num_wifi +  census2020$num_museum + census2020$num_historic,census2020)
+
+summary(full_model3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = census2020$num_arrests ~ census2020$num_parks + 
+##     census2020$pop + census2020$num_subway + census2020$POPS_true + 
+##     census2020$library_true + census2020$num_wifi + census2020$num_museum + 
+##     census2020$num_historic, data = census2020)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.3390 -0.1561 -0.0821 -0.0535  8.4472 
+## 
+## Coefficients:
+##                               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                  2.123e-02  2.555e-02   0.831   0.4061    
+## census2020$num_parks         7.974e-04  9.494e-04   0.840   0.4011    
+## census2020$pop               1.481e-05  6.047e-06   2.449   0.0144 *  
+## census2020$num_subway        8.623e-02  7.030e-03  12.266   &lt;2e-16 ***
+## census2020$POPS_trueTrue    -1.562e-02  5.900e-02  -0.265   0.7913    
+## census2020$library_trueTrue -9.766e-03  4.201e-02  -0.232   0.8162    
+## census2020$num_wifi          8.573e-03  4.460e-03   1.922   0.0547 .  
+## census2020$num_museum       -1.649e-02  4.022e-02  -0.410   0.6820    
+## census2020$num_historic      4.790e-04  1.955e-04   2.450   0.0143 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.5734 on 2318 degrees of freedom
+## Multiple R-squared:  0.1097, Adjusted R-squared:  0.1067 
+## F-statistic: 35.72 on 8 and 2318 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
 </div>
 <div id="summary-of-analysis" class="section level2">
 <h2>Summary of Analysis</h2>
