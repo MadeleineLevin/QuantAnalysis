@@ -62,6 +62,8 @@ library(units)
 library(nngeo)
 library(geosphere)
 library(gridExtra)
+library(jtools)
+library(huxtable)
 ```
 
 
@@ -482,6 +484,7 @@ full_model3 <- lm(census2020$num_arrests ~ census2020$num_parks + census2020$pop
 summary(full_model3)
 ```
 
+
 ## Summary of Analysis
 
 The greatest correlation with a p-value under .05 and a 95% confidence interval that does not include zero is between resisting arrest charges and another continuous variable is the presence of subway stations at .32. The more subway stations in a census tract, the more arrests for resisting arrest. Other continuous variables that showed correlation within 95% confidence are number of total arrests (the more total arrests, the more charges for resisting arrest) and total population (more population in a tract, more charges for resisting arrest). The presence of parks or libraries did not have significant correlation on the number of resisting arrest charges.
@@ -493,6 +496,51 @@ The multivariate analysis shows that when controlling for all other variables, o
 Our R-Squared value for this regression is .15, suggesting that this model explains about 15% of Resisting Arrest charges in NYC in Summer 2020.
 
 However, when we run the multivariate analysis again without including the total arrests dataset (which includes the resisting arrests and thus will have a correlation) the number of POPS in a census tract also has a statistically significant relationship with the number of resisting arrest charges.
+
+
+# Assignment 5 - Transformations
+
+## Centering the Data
+
+```{r}
+centered_data <- census2020 %>%
+  mutate(num_subway = num_subway - mean(num_subway, na.rm=TRUE),
+         pop = pop - mean(pop , na.rm=TRUE), 
+         num_historic  = num_historic - mean(num_historic, na.rm=TRUE))
+
+
+centered_model <- lm(census2020$num_arrests~ census2020$num_subway + census2020$pop + census2020$num_historic, centered_data)
+
+export_summs(full_model3, centered_model, 
+             error_format = "(p = {p.value})",
+             error_pos = "same",
+             model.names = c("Initial", "Centered"))
+```
+
+## Scaling the population 
+
+```{r}
+data_scaled <- census2020 %>%
+  mutate(pop = pop / 1000, num_wifi = num_wifi/10)
+
+model_scaled <- lm(census2020$num_arrests~ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi, data_scaled)
+
+export_summs(full_model3, centered_model, model_scaled,
+             error_format = "(p = {p.value})",
+             error_pos = "same",
+             model.names = c("Initial", 
+                             "Centered", 
+                             "Initial Scaled"))
+```
+
+
+## Interpreting the Data
+The number outside of the parentheses is the coefficient. The p values are only significant for subway, pop, and historic. 
+
+If the number of subway stops goes up by one then the number of resisting arrests goes up by 9%.
+For every 10 wifi spots there are 1% more arrests for resisting arrest. 
+
+Our various transformations did not change the data, but it did make the finding about the wifi spots more significant when they were scaled.
 
 # References
 
