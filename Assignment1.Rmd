@@ -500,6 +500,19 @@ However, when we run the multivariate analysis again without including the total
 
 # Assignment 5 - Transformations
 
+## Adding an arrest per capita columns
+
+```{r}
+
+census2020 <- census2020 %>%
+  mutate(arrest_percapita = as.numeric(num_arrests/pop))
+
+census2020 <- census2020 %>%
+  mutate(totalarrest_percapita = as.numeric(allarrestssummer/pop))
+
+```
+
+
 ## Centering the Data
 
 ```{r}
@@ -509,7 +522,7 @@ centered_data <- census2020 %>%
          num_historic  = num_historic - mean(num_historic, na.rm=TRUE))
 
 
-centered_model <- lm(census2020$num_arrests~ census2020$num_subway + census2020$pop + census2020$num_historic, centered_data)
+centered_model <- lm(census2020$num_arrests~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum , centered_data)
 
 export_summs(full_model3, centered_model, 
              error_format = "(p = {p.value})",
@@ -517,30 +530,63 @@ export_summs(full_model3, centered_model,
              model.names = c("Initial", "Centered"))
 ```
 
-## Scaling the population 
+## Scaling the population , wifi, and historic buildings
 
 ```{r}
 data_scaled <- census2020 %>%
-  mutate(pop = pop / 1000, num_wifi = num_wifi/10)
+  mutate(pop = pop / 1000, num_wifi = num_wifi/10, num_historic = num_historic/100)
 
-model_scaled <- lm(census2020$num_arrests~ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi, data_scaled)
+centered_scaled <-centered_data %>%
+  mutate(pop = pop / 1000, num_wifi = num_wifi/10, num_historic = num_historic/100)
+  
+model_scaled <- lm(census2020$num_arrests~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , data_scaled)
 
-export_summs(full_model3, centered_model, model_scaled,
+modelcentered_scaled <- lm(census2020$num_arrests~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , centered_scaled)
+
+export_summs(full_model3, centered_model, model_scaled, modelcentered_scaled,
              error_format = "(p = {p.value})",
              error_pos = "same",
              model.names = c("Initial", 
                              "Centered", 
-                             "Initial Scaled"))
+                             "Initial Scaled", 
+                             "Centered Scaled"))
+```
+
+## Comparing Arrests Overall
+
+
+```{r}
+
+total_model <- lm(census2020$allarrestssummer ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true + census2020$num_wifi +  census2020$num_museum + census2020$num_historic,census2020)
+
+total_centered_model <- lm(census2020$allarrestssummer ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum , centered_data)
+
+total_model_scaled <- lm(census2020$allarrestssummer ~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , data_scaled)
+
+totalmodelcentered_scaled <- lm(census2020$allarrestssummer ~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , centered_scaled)
+
+export_summs(total_model, total_centered_model, total_model_scaled, totalmodelcentered_scaled,
+             error_format = "(p = {p.value})",
+             error_pos = "same",
+             model.names = c("ALL ARRESTS \nInitial", 
+                             "ALL ARRESTS \nCentered", 
+                             "ALL ARRESTS \nInitial Scaled", 
+                             "ALL ARRESTS \nCentered Scaled"))
+
 ```
 
 
+
 ## Interpreting the Data
-The number outside of the parentheses is the coefficient. The p values are only significant for subway, pop, and historic. 
+The p values are only significant for subway, pop, and historic. 
 
 If the number of subway stops goes up by one then the number of resisting arrests goes up by 9%.
 For every 10 wifi spots there are 1% more arrests for resisting arrest. 
 
-Our various transformations did not change the data, but it did make the finding about the wifi spots more significant when they were scaled.
+Our various transformations did not change the data, but it did make the finding about the wifi spots more significant when they were scaled. Even trying the transformation analysis with total number of arrests did not create any large changes. 
+
+The transformations that we tried were first means centering subway, population, and historic districts. Second, we tried scaling population to steps of 1,000 and wi-fi by steps of ten and historic districts by steps of 100. Third, we tried a combination of these transformations (means centered AND scaled). In all three analyses the outputs remained almost identical. One reason for the lack of change could be that many census tracts have an average number of subway stations, population (which makes sense because the Census Bureau tries to standardize this), and historic buildings. While this does make sense for population, it makes less sense for subway stations and historic districts which do seem to really vary.The impact of the independent variables on the dependent variable is pretty small so it is hard to see differences with only two decimal places. We tried out modifying the arrests to be per capita, with the plan to scale this up by 1000 and see if making the numbers larger allowed us to see more variation. However, we ran into an issue because the new column created NA values which then made the regression models not work. 
+
 
 # References
 

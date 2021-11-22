@@ -1,0 +1,36 @@
+---
+title: "TryingPerCapita"
+author: "Madeleine Levin"
+date: "11/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+percap_data_scaled <- census2020 %>%
+  mutate(pop = pop / 1000, num_wifi = num_wifi/10, num_historic = num_historic/100, arrest_percapita * 1000)
+
+percap_centered_scaled <-centered_data %>%
+  mutate(pop = pop / 1000, num_wifi = num_wifi/10, num_historic = num_historic/100, arrest_percapita * 1000)
+
+percap_model <- lm(arrest_percapita~ num_parks + pop + num_subway + num_wifi +  num_museum + num_historic, census2020)
+
+percap_modelcentered <- lm(census2020$arrest_percapita~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum , centered_data)
+  
+percap_model_scaled <- lm(census2020$arrest_percapita~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , data_scaled)
+
+percap_modelcentered_scaled <- lm(census2020$arrest_percapita~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , centered_scaled)
+
+export_summs(full_model3, centered_model, model_scaled, modelcentered_scaled,
+             error_format = "(p = {p.value})",
+             error_pos = "same",
+             model.names = c("Initial\n per capita", 
+                             "Centered\n per capita", 
+                             "Initial Scaled \n per 1000", 
+                             "Centered Scaled \n per 1000"))
+```
+
