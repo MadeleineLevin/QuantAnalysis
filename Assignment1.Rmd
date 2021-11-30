@@ -600,7 +600,7 @@ coeff_names_interaction <- c("Constant" = "(Intercept)",
                  "Population in 2020" = "census2020$pop")
                    
                    
-interaction_model <- lm(census2020$allarrestssummer ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + census2020$num_wifi*census2020$num_historic, centered_data)
+interaction_model <- lm(census2020$allarrestssummer ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + census2020$num_subway*census2020$num_POPs, centered_data)
 
 export_summs(total_centered_model, interaction_model,
              error_format = "(p = {p.value})",
@@ -612,14 +612,12 @@ export_summs(total_centered_model, interaction_model,
 ```
 
 ```{r}
-x_ticks <- seq(0, 100, by = 10)
-
-interact_plot(interaction_model, pred = UHRSWORK, modx = SEX, interval = TRUE) +
-  scale_x_continuous(name = "Usual hours worked per week",
-                     breaks = x_ticks - hours_mean$mean,
-                     labels = x_ticks) +
-  scale_y_continuous(name = "Commute time to work (minutes)",
-                     breaks = seq(26, 36, by = 1))
+interact_plot(interaction_model, pred = census2020$num_subway, modx = census2020$num_POPs,
+              interval = TRUE) +
+  scale_x_continuous(breaks = breaks <- c(-2, -1, 0, 1, 2),
+                     labels = round(breaks * 10 + mean(census2020$num_subway, na.rm = TRUE)),
+                     name = "Number of Subways") +
+  scale_y_continuous(name = "Size of Population")
 ```
 
 
