@@ -596,18 +596,13 @@ coeff_names_interaction <- c("Constant" = "(Intercept)",
                  "Number of Parks" = "census2020$num_parks",
                  "Number of Subways" = "census2020$num_subway",
                  "Number of Museums" = "census2020$num_museum", 
-                 "Population density" = "census2020$pop",
                  "Arrests in 2020" = "census2020$allarrestssummer",
-                 "Large fringe metro" = "typeLarge fringe metro",
-                 "Medium metro" = "typeMedium metro",
-                 "Small metro" = "typeSmall metro",
-                 "Micropolitan" = "typeMicropolitan",
-                 "Rural" = "typeNon-core")
+                 "Population in 2020" = "census2020$pop")
                    
                    
-interaction_model <- lm(census2020$allarrestssummer ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + num_wifi*num_historic, centered_data)
+interaction_model <- lm(census2020$allarrestssummer ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + census2020$num_wifi*census2020$num_historic, centered_data)
 
-export_summs(centered_data, interaction_model,
+export_summs(total_centered_model, interaction_model,
              error_format = "(p = {p.value})",
              error_pos = "same",
              model.names = c("Model 4",
