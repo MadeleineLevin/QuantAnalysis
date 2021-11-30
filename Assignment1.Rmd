@@ -64,6 +64,7 @@ library(geosphere)
 library(gridExtra)
 library(jtools)
 library(huxtable)
+library(interactions)
 ```
 
 
@@ -522,7 +523,7 @@ centered_data <- census2020 %>%
          num_historic  = num_historic - mean(num_historic, na.rm=TRUE))
 
 
-centered_model <- lm(census2020$num_arrests~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum , centered_data)
+centered_model <- lm(census2020$num_arrests~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$POPS_true + census2020$num_wifi + census2020$num_museum , centered_data)
 
 export_summs(full_model3, centered_model, 
              error_format = "(p = {p.value})",
@@ -539,9 +540,9 @@ data_scaled <- census2020 %>%
 centered_scaled <-centered_data %>%
   mutate(pop = pop / 1000, num_wifi = num_wifi/10, num_historic = num_historic/100)
   
-model_scaled <- lm(census2020$num_arrests~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , data_scaled)
+model_scaled <- lm(census2020$num_arrests~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum + census2020$POPS_true , data_scaled)
 
-modelcentered_scaled <- lm(census2020$num_arrests~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , centered_scaled)
+modelcentered_scaled <- lm(census2020$num_arrests~ census2020$num_parks + census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum + census2020$POPS_true, centered_scaled)
 
 export_summs(full_model3, centered_model, model_scaled, modelcentered_scaled,
              error_format = "(p = {p.value})",
@@ -559,7 +560,7 @@ export_summs(full_model3, centered_model, model_scaled, modelcentered_scaled,
 
 total_model <- lm(census2020$allarrestssummer ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true + census2020$num_wifi +  census2020$num_museum + census2020$num_historic,census2020)
 
-total_centered_model <- lm(census2020$allarrestssummer ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum , centered_data)
+total_centered_model <- lm(census2020$allarrestssummer ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + census2020$POPS_true, centered_data)
 
 total_model_scaled <- lm(census2020$allarrestssummer ~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , data_scaled)
 
@@ -596,29 +597,26 @@ coeff_names_interaction <- c("Constant" = "(Intercept)",
                  "Number of Parks" = "census2020$num_parks",
                  "Number of Subways" = "census2020$num_subway",
                  "Number of Museums" = "census2020$num_museum", 
-                 "Arrests in 2020" = "census2020$allarrestssummer",
-                 "Population in 2020" = "census2020$pop")
+                 "Resisting Arrests Charges" = "census2020$num_arrests",
+                 "Population in 2020" = "census2020$pop", 
+                 "Has a POPS" = "census2020$POPS_trueTrue")
                    
                    
-interaction_model <- lm(census2020$allarrestssummer ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + census2020$num_subway*census2020$num_POPs, centered_data)
+interaction_model <- lm(census2020$num_arrests ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + census2020$POPS_true + census2020$num_subway*census2020$POPS_true,  centered_data)
 
-export_summs(total_centered_model, interaction_model,
+export_summs(centered_model, interaction_model,
              error_format = "(p = {p.value})",
              error_pos = "same",
-             model.names = c("Model 4",
-                             "Model 5"))
+             model.names = c("Centered Data",
+                             "Centered Data with Interactions"))
             
             
 ```
 
-```{r}
-interact_plot(interaction_model, pred = census2020$num_subway, modx = census2020$num_POPs,
-              interval = TRUE) +
-  scale_x_continuous(breaks = breaks <- c(-2, -1, 0, 1, 2),
-                     labels = round(breaks * 10 + mean(census2020$num_subway, na.rm = TRUE)),
-                     name = "Number of Subways") +
-  scale_y_continuous(name = "Size of Population")
-```
+
+## Explanation
+
+The interaction model shows that the effect that the number of subway stations had on resisting arrest charges in New York in Summer 2020 differed between census tracts that had POPS (Privately Owned Public Spaces) and ones that did not. In census tracts with POPS, the coefficient for subway stations is slightly larger, meaning that subway stations have a larger impact on resisting arrest charges in tracts with at least one POPS. The effects of subway stops on resisting arrest charges remain significant for both tracts with and tracts without POPS.
 
 
 # References
