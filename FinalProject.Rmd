@@ -337,3 +337,8 @@ Our R-Squared value for this regression is .11, suggesting that this model expla
 
 Explain why your analysis matters and why someone should care about it.
 
+# References
+
+Rafail, Patrick. “Protest in the City: Urban Spatial Restructuring and Dissent in New York, 1960–2006.” Urban Studies 55, no. 1 (January 2018): 244–60. https://doi.org/10.1177/0042098016661464.
+
+Armed Conflict Location & Event Data Project (ACLED), The US Crisis Monitor, 2020 https://acleddata.com/acleddatanew/wp-content/uploads/2020/09/ACLED_USDataReview_Sum2020_SeptWebPDF_HiRes.pdf
