@@ -1,0 +1,339 @@
+---
+title: "Final Project"
+author: "Madeleine Levin, Jaida Nabayan, Michael Zajakowski Uhll"
+date: "11/30/2021"
+output:
+   html_document:
+     theme: readable
+     toc: true
+     toc_depth: 3
+     toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# ASSIGNMENT INSTRUCTIONS
+Introduction: Define your research question and explain why it is important. Describe the hypothesis that you are testing.
+Background: Summarize research that others have done to address your research question (or related questions).
+Data: Describe the dataset you are using to answer your research question.
+Methods: Describe the statistical tests you used to answer your research question. Describe what result would be required to confirm the hypothesis you are testing.
+Results: Present the results of the statistical test you conducted and interpret those results.
+Discussion: Explain how your results do or do not support the hypothesis you identified in the introduction. Describe any limitations or weaknesses in your analysis. Propose an analysis or experiment that could address those weaknesses.
+Conclusion: Explain why your analysis matters and why someone should care about it.
+
+# Introduction and  Research question
+
+Introduction: Define your research question and explain why it is important. Describe the hypothesis that you are testing.
+
+What is the relationship between the presence of open space and other amenities in NYC neighborhoods and the number of people arrested during protests against police brutality in summer 2020? 
+
+# Background 
+While there is not a lot of quantitative research exploring the relationship between open space and protest in summer 2020, Rafail (2018) found that in NYC protests between 1960 and 2006, "the built environment, and the social relationships creating it, powerfully influence where dissent occurs." Rafail finds that Privately Owned Public Spaces (POPs) are increasingly sites of gathering and protest, reflecting decentralization of public gathering spaces.Looking at the protests following George Floyd's death in 2020, The US Crisis Monitor collected data on the political demonstrations that took place during from May - August 2020, with substantial focus on Black Lives Matter (BLM) protests throughout the United States. Their maps show the spatial concentration of protests in urban centers and that the majority of gatherings were protests and not riots (though they do not provide a clear definition explaining the difference between a riot and protest).
+
+# Data 
+
+The sample population for this study is the entire citizen population of New York City in the summer of 2020. The analysis includes the following variables:
+
+Variables are aggregated to the census tract level
+
+Continuous
+
+* NYC Arrests for Summer 2020 for "Resisting Arrest"
+* All NYC Arrests in Summer 2020
+* Number of Parks 
+* Number of POPS
+* Number of Subway Stations
+* Number of Museums
+* Number of Historic Buildings (designated by the Landmarks Preservation Commission)
+* Number of Public Wi-Fi Locations
+
+Categorical
+
+* NYC Borough of Arrest
+* Does the Census Tract have a POPS (True or False)
+* Does the Census Tract have a Library (True or False)
+
+
+The arrest-level data was filtered down to "resisting arrest", an arrest description that often corresponds with protest activity. While not all arrests in this category can be tied to protests and not all protest arrests are in this category, we are using it here as a proxy for protest activity, the categories significantly filter down over 25,000 arrests over the summer months (May 1-August 31st, 2020) to 395 arrest rows that are more likely to be associated with protests. We used spatial processing tools to tie this data to NYC's 2,327 census tracts along with other neighborhood amenities including parks, POPS (Privately Operated Public Spaces), libraries, and subway stations. At times in our analysis we compared the total arrests for summer 2020 
+
+Arrest Description Used as Proxy for Protest Arrests:
+
+* OFFENSES AGAINST PUBLIC ADMININISTRATION (RESISTING ARREST)
+
+# Methods
+
+
+# Results
+
+Present the results of the statistical test you conducted and interpret those results.
+
+
+## Load data
+
+```{r, include=FALSE}
+library(tidyverse)
+library(tidycensus)
+library(readxl)
+library(knitr)
+library(sf)
+library(ggthemes)
+library(ggspatial)
+library(units)
+library(nngeo)
+library(geosphere)
+library(gridExtra)
+library(jtools)
+library(huxtable)
+library(interactions)
+```
+
+```{r, include = FALSE}
+arrestdata <-st_read("data/summer_NYC_resisting_arrest.geojson")
+allarrests <-st_read("data/summer2020arrests.geojson")
+```
+
+```{r, include = FALSE}
+POPs <-st_read("https://data.cityofnewyork.us/resource/rvih-nhyn.geojson")
+libr <-st_read("data/Library.geojson")
+parks <-st_read("data/Parks.geojson")
+subway<-st_read("data/Subway.geojson")
+historic <-st_read("data/HistoricBuildings.geojson")
+museum <-st_read("data/Museums.geojson")
+wifi <-st_read("data/WifiHotspot.geojson")
+```
+
+```{r, message = FALSE, include = FALSE}
+census2020 <- get_decennial(geography = "tract",
+                        year= 2020,
+                        variables =c(pop= "P1_001N",
+                                     race_pop = "P2_001N",
+                                     latino = "P2_002N",
+                                     white_alone = "P2_005N",
+                                     black_alone = "P2_006N",
+                                     native_alone = "P2_007N", 
+                                     asian_alone = "P2_008N"),
+                        state = "NY", county = c("Queens", "Kings", "Richmond","New York", "Bronx"),
+              output = "wide",
+                        geometry = TRUE)
+
+```
+
+```{r, include = FALSE}
+NY_state_plane <- "+proj=lcc +lat_1=41.03333333333333 +lat_2=40.66666666666666 +lat_0=40.16666666666666 +lon_0=-74 +x_0=300000.0000000001 +y_0=0 +ellps=GRS80 +datum=NAD83 +to_meter=0.3048006096012192 +no_defs "
+census2020 <-census2020 %>%
+   st_transform(NY_state_plane)
+
+arrestdata <-arrestdata %>%
+   st_transform(NY_state_plane)
+
+allarrests <- allarrests %>%
+   st_transform(NY_state_plane)
+
+POPs <-POPs %>%
+   st_transform(NY_state_plane)
+
+libr <-libr %>%
+   st_transform(NY_state_plane)
+
+parks <-parks %>%
+   st_transform(NY_state_plane)
+
+subway <-subway %>%
+   st_transform(NY_state_plane)
+
+historic <-historic %>%
+   st_transform(NY_state_plane)
+
+museum <-museum %>%
+   st_transform(NY_state_plane)
+
+wifi <-wifi %>%
+   st_transform(NY_state_plane)
+```
+
+```{r, include = FALSE}
+census2020 <- census2020 %>%
+  mutate(num_arrests = lengths(st_covers(census2020, arrestdata)))
+
+census2020 <- census2020 %>%
+   mutate(allarrestssummer = lengths(st_covers(census2020, allarrests)))
+
+census2020 <- census2020 %>%
+  mutate(num_library = lengths(st_covers(census2020, libr)))
+
+census2020 <- census2020 %>%
+  mutate(num_POPs = lengths(st_covers(census2020, POPs)))
+
+census2020 <- census2020 %>%
+  mutate(num_parks = lengths(st_covers(census2020, parks)))
+
+census2020 <- census2020 %>%
+  mutate(num_subway = lengths(st_covers(census2020, subway)))
+
+census2020 <- census2020 %>%
+  mutate(num_historic = lengths(st_covers(census2020, historic)))
+
+census2020 <- census2020 %>%
+  mutate(num_museum = lengths(st_covers(census2020, museum)))
+
+census2020 <- census2020 %>%
+  mutate(num_wifi = lengths(st_covers(census2020, wifi)))
+
+```
+
+```{r, include = FALSE}
+census2020 <- census2020 %>%
+  mutate(library_true = case_when(census2020$num_library == 0 ~ "False",                                
+                               census2020$num_library== 1 ~ "True",
+                               census2020$num_library== 2 ~ "True"))
+```
+
+```{r, include = FALSE}
+census2020 <- census2020 %>%
+  mutate(POPS_true = case_when(census2020$num_POPs == 0 ~ "False",                                
+                               census2020$num_POPs== 1 ~ "True",
+                               census2020$num_POPs== 2 ~ "True",
+                               census2020$num_POPs== 3 ~ "True",
+                               census2020$num_POPs== 4 ~ "True",
+                               census2020$num_POPs== 5 ~ "True",
+                               census2020$num_POPs== 6 ~ "True",
+                               census2020$num_POPs== 7 ~ "True",
+                               census2020$num_POPs== 8 ~ "True",
+                               census2020$num_POPs== 9 ~ "True",
+                               census2020$num_POPs== 10 ~ "True",
+                               census2020$num_POPs== 11 ~ "True",
+                               census2020$num_POPs== 12 ~ "True",
+                               census2020$num_POPs== 13 ~ "True",
+                               census2020$num_POPs== 14 ~ "True"))
+t.test(census2020$num_arrests ~ census2020$POPS_true, census2020)
+```
+## Number of Resisting Arrest Charges Per Borough
+
+This introductory chart breaks down Resisting Arrest Charges by Borough, showing that the largest percentages were in Manhattan and Brooklyn with the Bronx and Queens following close behind. This is consistent with media coverage of protest activity in New York for summer 2020 centering around Manhattan and Brooklyn and suggests that Resisting Arrests is a helpful proxy for protest activity. Error bars on the chart represent 95% confidence interval.
+
+```{r, include = FALSE}
+
+pct_Queens<- t.test(arrestdata$arrest_boro == "Q")
+pct_Brooklyn <-t.test(arrestdata$arrest_boro == "K")
+pct_StatenIsland <-t.test(arrestdata$arrest_boro == "S")
+pct_Manhattan <-t.test(arrestdata$arrest_boro == "M")
+pct_Bronx <-t.test(arrestdata$arrest_boro == "B")
+
+PCT_summary_arrests <- tibble(`Percent of Protest Arrests in Each NYC Borough, Summer 2020` =
+                            c("Bronx","Brooklyn",
+                                "Queens","Manhattan", "Staten Island"),
+                            `Sample proportion` = 
+                              c(pct_Bronx$estimate * 100,
+                                pct_Brooklyn$estimate *100,
+                                pct_Queens$estimate *100,
+                                pct_Manhattan$estimate *100,
+                                pct_StatenIsland$estimate *100),
+                            `95-percent confidence - low` = 
+                              c(pct_Bronx$conf.int[1] * 100,
+                                pct_Brooklyn$conf.int[1] * 100,
+                                pct_Queens$conf.int[1] *100,
+                            pct_Manhattan$conf.int[1] *100,
+                            pct_StatenIsland$conf.int[1] *100),
+               
+                            `95-percent confidence - high` = 
+                              c(pct_Bronx$conf.int[2] * 100,
+                                pct_Brooklyn$conf.int[2] * 100,
+                                pct_Queens$conf.int[2]*100, 
+                                pct_Manhattan$conf.int[2]*100,
+                                pct_StatenIsland$conf.int[2]*100))
+
+kable(PCT_summary_arrests, digits = 0)
+```
+
+```{r}
+ggplot(PCT_summary_arrests) +
+  geom_bar(aes(x = `Percent of Protest Arrests in Each NYC Borough, Summer 2020`, 
+               y = `Sample proportion`),
+           stat = "identity") +
+  geom_errorbar(aes(x = `Percent of Protest Arrests in Each NYC Borough, Summer 2020`, 
+               y = `Sample proportion`,
+               ymin = `95-percent confidence - low`,
+               ymax = `95-percent confidence - high`),
+           stat = "identity") +
+  scale_y_continuous(name = "Percent of total protest arrests",
+                     breaks = c(0, 20, 40, 60, 80),
+                     labels = c("0", "10%", "20%", "30%", "40%")) +
+  theme_bw()
+
+
+```
+## Multivariate Regression
+
+This model shows the impact that each variable had on the number of resisting arrest charges while holding all other variables constant. While we did try a number of scaling and centering transformations on this regression, none ultimately made a large difference in the output and the model fit remained similar between versions as well. 
+
+```{r}
+full_model3 <- lm(census2020$num_arrests ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true + census2020$num_wifi +  census2020$num_museum + census2020$num_historic,census2020)
+
+export_summs(full_model3,
+             error_format = "(p = {p.value})",
+             error_pos = "same",
+             model.names = c("Multivariate Regression"))
+```
+
+```{r}
+effect_plot(centered_model_scaled, pred = pop_dens_100, interval = TRUE) +
+  scale_y_continuous(name = "Number of COVID cases per capita") +
+  scale_x_continuous(name = "Population per square mile",
+                     breaks = breaks <- seq(0, 700, by = 100),
+                     labels = prettyNum(breaks*100, big.mark = ","))
+```
+
+## Multivariate Regression with Interactions
+
+```{r}
+coeff_names_interaction <- c("Constant" = "(Intercept)",
+                 "Number of Wifi Spots" = "census2020$num_wifi",
+                 "Number of Historic Sites" = "census2020$num_historic",
+                 "Number of Parks" = "census2020$num_parks",
+                 "Number of Subways" = "census2020$num_subway",
+                 "Number of Museums" = "census2020$num_museum", 
+                 "Resisting Arrests Charges" = "census2020$num_arrests",
+                 "Population in 2020" = "census2020$pop", 
+                 "Has a POPS" = "census2020$POPS_trueTrue")
+                   
+                   
+interaction_model <- lm(census2020$num_arrests ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + census2020$POPS_true + census2020$num_subway*census2020$POPS_true,  census2020)
+
+export_summs(full_model3, interaction_model,
+             error_format = "(p = {p.value})",
+             error_pos = "same",
+             model.names = c("Original Data",
+                             "Data with Interaction"))
+            
+            
+```
+
+```{r}
+interact_plot(interaction_model, pred = census2020$num_subway, modx = census2020$POPS_true,
+              interval = TRUE) +
+  scale_x_continuous(breaks = breaks <- c(-2, -1, 0, 1, 2),
+                     labels = round(breaks * 10 + mean(my_data$med_age_E, na.rm = TRUE)),
+                     name = "Subway Stations") +
+  scale_y_continuous(name = "Resisting Arrest Charges Per Census Tract")
+```
+
+#Discussion
+
+Explain how your results do or do not support the hypothesis you identified in the introduction. Describe any limitations or weaknesses in your analysis. Propose an analysis or experiment that could address those weaknesses.
+
+## Multivariate Regression Discussion
+
+The greatest correlation with a p-value under .05 and a 95% confidence interval that does not include zero is between resisting arrest charges and another continuous variable is the presence of subway stations at .32. The more subway stations in a census tract, the more arrests for resisting arrest. Other continuous variables that showed correlation within 95% confidence are number of total arrests (the more total arrests, the more charges for resisting arrest) and total population (more population in a tract, more charges for resisting arrest). The presence of parks or libraries did not have significant correlation on the number of resisting arrest charges.
+
+
+The multivariate analysis shows that when controlling for all other variables, the population, number of subway stations, number of historic buildings, and number of wifi locations in a census tract have an impact on the number of resisting arrest charges (because their p-values are less than .05). Subway stations, in our bivariate analysis, already had the strongest correlation. Here they have a 9% positive relationship on the number of resisting arrest charges (meaning that arrest charges go up 9% with every additional subway stop in a tract). The impact of population and historic buildings is so small that it is less than 1% and wi-fi locations is a positive relationship of 1%. However, the difference between one and two subway stations in a neighborhood is much bigger than the difference between one or two people, so understanding the context of the variables is important. 
+
+Our R-Squared value for this regression is .11, suggesting that this model explains about 11% of Resisting Arrest charges in NYC in Summer 2020.
+
+
+#Conclusion
+
+Explain why your analysis matters and why someone should care about it.
+
