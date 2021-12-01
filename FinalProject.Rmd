@@ -114,9 +114,10 @@ census2020 <- get_decennial(geography = "tract",
                                      black_alone = "P2_006N",
                                      native_alone = "P2_007N", 
                                      asian_alone = "P2_008N"),
-                        state = "NY", county = c("Queens", "Kings", "Richmond","New York", "Bronx"),
+                        state = "NY", county = c("Queens", "Kings", 
+                                                 "Richmond","New York", "Bronx"),
               output = "wide",
-                        geometry = TRUE)
+                        geometry = T)
 
 ```
 
@@ -269,7 +270,7 @@ ggplot(PCT_summary_arrests) +
 This model shows the impact that each variable had on the number of resisting arrest charges while holding all other variables constant. While we did try a number of scaling and centering transformations on this regression, none ultimately made a large difference in the output and the model fit remained similar between versions as well. 
 
 ```{r}
-full_model3 <- lm(census2020$num_arrests ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true + census2020$num_wifi +  census2020$num_museum + census2020$num_historic,census2020)
+full_model3 <- lm(num_arrests ~ num_parks + pop + num_subway + POPS_true + library_true + num_wifi +  num_museum + num_historic,census2020)
 
 export_summs(full_model3,
              error_format = "(p = {p.value})",
@@ -299,7 +300,7 @@ coeff_names_interaction <- c("Constant" = "(Intercept)",
                  "Has a POPS" = "census2020$POPS_trueTrue")
                    
                    
-interaction_model <- lm(census2020$num_arrests ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + census2020$POPS_true + census2020$num_subway*census2020$POPS_true,  census2020)
+interaction_model <- lm(num_arrests ~ num_subway + pop + num_parks + num_historic + num_wifi + num_museum + POPS_true + num_subway*POPS_true,  census2020)
 
 export_summs(full_model3, interaction_model,
              error_format = "(p = {p.value})",
@@ -311,10 +312,10 @@ export_summs(full_model3, interaction_model,
 ```
 
 ```{r}
-interact_plot(interaction_model, pred = census2020$num_subway, modx = census2020$POPS_true,
+interact_plot(interaction_model, pred = num_subway, modx = POPS_true,
               interval = TRUE) +
   scale_x_continuous(breaks = breaks <- c(-2, -1, 0, 1, 2),
-                     labels = round(breaks * 10 + mean(my_data$med_age_E, na.rm = TRUE)),
+                     labels = round(breaks * 10 ),
                      name = "Subway Stations") +
   scale_y_continuous(name = "Resisting Arrest Charges Per Census Tract")
 ```
