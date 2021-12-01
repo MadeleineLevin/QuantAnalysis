@@ -279,12 +279,35 @@ export_summs(full_model3,
 ```
 
 ```{r}
-effect_plot(centered_model_scaled, pred = pop_dens_100, interval = TRUE) +
-  scale_y_continuous(name = "Number of COVID cases per capita") +
-  scale_x_continuous(name = "Population per square mile",
-                     breaks = breaks <- seq(0, 700, by = 100),
-                     labels = prettyNum(breaks*100, big.mark = ","))
+effect_plot(full_model3, pred = num_subway, interval = TRUE) +
+  scale_y_continuous(name = "Resisting Arrest Charges per Census Tract") +
+  scale_x_continuous(name = "Subway Stops Per Census Tract",
+                     breaks = breaks <- seq(0, 30, by = 5),
+                     labels = prettyNum(breaks, big.mark = ","))
 ```
+```{r}
+effect_plot(full_model3, pred = pop, interval = TRUE) +
+  scale_y_continuous(name = "Resisting Arrest Charges per Census Tract") +
+  scale_x_continuous(name = "Population Per Census Tract",
+                     breaks = breaks <- seq(0, 20000, by = 5000),
+                     labels = prettyNum(breaks, big.mark = ","))
+```
+```{r}
+effect_plot(full_model3, pred = num_historic, interval = TRUE) +
+  scale_y_continuous(name = "Resisting Arrest Charges per Census Tract") +
+  scale_x_continuous(name = "Historic Buildings",
+                     breaks = breaks <- seq(0, 1000, by = 100),
+                     labels = prettyNum(breaks, big.mark = ","))
+```
+
+```{r}
+effect_plot(full_model3, pred = num_wifi, interval = TRUE) +
+  scale_y_continuous(name = "Resisting Arrest Charges per Census Tract") +
+  scale_x_continuous(name = "Wifi Locations Per Census Tract",
+                     breaks = breaks <- seq(0, 100, by = 20),
+                     labels = prettyNum(breaks, big.mark = ","))
+```
+
 
 ## Multivariate Regression with Interactions
 
@@ -300,7 +323,7 @@ coeff_names_interaction <- c("Constant" = "(Intercept)",
                  "Has a POPS" = "census2020$POPS_trueTrue")
                    
                    
-interaction_model <- lm(num_arrests ~ num_subway + pop + num_parks + num_historic + num_wifi + num_museum + POPS_true + num_subway*POPS_true,  census2020)
+interaction_model <- lm(num_arrests ~ num_subway + pop + num_parks + num_historic + num_wifi + num_museum + POPS_true + library_true + num_subway*POPS_true,  census2020)
 
 export_summs(full_model3, interaction_model,
              error_format = "(p = {p.value})",
@@ -314,8 +337,8 @@ export_summs(full_model3, interaction_model,
 ```{r}
 interact_plot(interaction_model, pred = num_subway, modx = POPS_true,
               interval = TRUE) +
-  scale_x_continuous(breaks = breaks <- c(-2, -1, 0, 1, 2),
-                     labels = round(breaks * 10 ),
+  scale_x_continuous(breaks = breaks <- c( 0, 5, 10, 15, 20, 25, 30),
+                     labels = round(breaks),
                      name = "Subway Stations") +
   scale_y_continuous(name = "Resisting Arrest Charges Per Census Tract")
 ```
