@@ -302,7 +302,16 @@ census2020 &lt;- census2020 %&gt;%
   mutate(num_parks = lengths(st_covers(census2020, parks)))
 
 census2020 &lt;- census2020 %&gt;%
-  mutate(num_subway = lengths(st_covers(census2020, subway)))</code></pre>
+  mutate(num_subway = lengths(st_covers(census2020, subway)))
+
+census2020 &lt;- census2020 %&gt;%
+  mutate(num_historic = lengths(st_covers(census2020, historic)))
+
+census2020 &lt;- census2020 %&gt;%
+  mutate(num_museum = lengths(st_covers(census2020, museum)))
+
+census2020 &lt;- census2020 %&gt;%
+  mutate(num_wifi = lengths(st_covers(census2020, wifi)))</code></pre>
 </div>
 </div>
 <div id="calculations--assignment-2" class="section level1">
@@ -544,7 +553,7 @@ kable(PCT_summary_arrests, digits = 0)</code></pre>
 ## sample estimates:
 ##       cor 
 ## 0.2705539</code></pre>
-<p>Tracts with a higher number of arrests overall are associated with a higher number of arrests for resisting arrest.</p>
+<p>Tracts with a higher number of arrests overall are associated with a higher number of arrests for resisting arrest. The correlation is .27 (and the 95% confidence interval does not cover 0 + p-value is less than .05)</p>
 </div>
 <div id="population" class="section level3">
 <h3>Population</h3>
@@ -577,7 +586,7 @@ kable(PCT_summary_arrests, digits = 0)</code></pre>
 ## sample estimates:
 ##        cor 
 ## 0.03047881</code></pre>
-<p>Tracts with a higher numbers of parks are associated with a higher number of arrests for resisting arrest.</p>
+<p>Tracts with a higher numbers of parks are associated with a higher number of arrests for resisting arrest–however the confidence interval includes 0, which means the correlation is not proven.</p>
 </div>
 <div id="number-of-subway-stations" class="section level3">
 <h3>Number of Subway Stations</h3>
@@ -593,7 +602,7 @@ kable(PCT_summary_arrests, digits = 0)</code></pre>
 ## sample estimates:
 ##       cor 
 ## 0.3185731</code></pre>
-<p>Tracts with a higher numbers of subways stations are associated with a higher number of arrests for resisting arrest.</p>
+<p>Tracts with a higher numbers of subways stations are associated with a higher number of arrests for resisting arrest. The correlation is .32 (and the confidence interval/p-value allow for confidence in this correlation.)</p>
 </div>
 <div id="number-of-libraries" class="section level3">
 <h3>Number of Libraries</h3>
@@ -609,7 +618,52 @@ kable(PCT_summary_arrests, digits = 0)</code></pre>
 ## sample estimates:
 ##        cor 
 ## 0.03207296</code></pre>
-<p>Tracts with a higher numbers of libraries are associated with a higher number of arrests for resisting arrest.</p>
+<p>Tracts with a higher numbers of libraries are associated with a higher number of arrests for resisting arrest. However, the p-value and confidence interval show that this correlation is not proven.</p>
+</div>
+<div id="number-of-wifi-hotspots" class="section level3">
+<h3>Number of Wifi Hotspots</h3>
+<pre class="r"><code>cor.test(~ census2020$num_arrests + census2020$num_wifi, census2020 = census2020)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  census2020$num_arrests and census2020$num_wifi
+## t = 9.9513, df = 2325, p-value &lt; 2.2e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.1628244 0.2407779
+## sample estimates:
+##       cor 
+## 0.2021213</code></pre>
+</div>
+<div id="number-of-museums" class="section level3">
+<h3>Number of Museums</h3>
+<pre class="r"><code>cor.test(~ census2020$num_arrests + census2020$num_museum, census2020 = census2020)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  census2020$num_arrests and census2020$num_museum
+## t = 4.1215, df = 2325, p-value = 3.896e-05
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.0446861 0.1253658
+## sample estimates:
+##        cor 
+## 0.08516558</code></pre>
+</div>
+<div id="number-of-historic-buildings" class="section level3">
+<h3>Number of Historic Buildings</h3>
+<pre class="r"><code>cor.test(~ census2020$num_arrests + census2020$num_historic, census2020 = census2020)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  census2020$num_arrests and census2020$num_historic
+## t = 4.8904, df = 2325, p-value = 1.075e-06
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.06051816 0.14096031
+## sample estimates:
+##       cor 
+## 0.1009041</code></pre>
 </div>
 </div>
 <div id="difference-in-means-categorical-variables" class="section level2">
@@ -638,7 +692,11 @@ t.test(census2020$num_arrests ~ census2020$POPS_true, census2020)</code></pre>
 ## 
 ## data:  census2020$num_arrests by census2020$POPS_true
 ## t = -2.6436, df = 133.75, p-value = 0.009182
+<<<<<<< HEAD:Assignment3.html
 ## alternative hypothesis: true difference in means between group False and group True is not equal to 0
+=======
+## alternative hypothesis: true difference in means is not equal to 0
+>>>>>>> 453d0f5760d9079c929714163260e7ce144c7845:Assignment1.html
 ## 95 percent confidence interval:
 ##  -0.60536258 -0.08720978
 ## sample estimates:
@@ -660,7 +718,11 @@ t.test(census2020$num_arrests ~ census2020$library_true, census2020)</code></pre
 ## 
 ## data:  census2020$num_arrests by census2020$library_true
 ## t = -1.6383, df = 256.41, p-value = 0.1026
+<<<<<<< HEAD:Assignment3.html
 ## alternative hypothesis: true difference in means between group False and group True is not equal to 0
+=======
+## alternative hypothesis: true difference in means is not equal to 0
+>>>>>>> 453d0f5760d9079c929714163260e7ce144c7845:Assignment1.html
 ## 95 percent confidence interval:
 ##  -0.15754108  0.01445297
 ## sample estimates:
@@ -668,6 +730,321 @@ t.test(census2020$num_arrests ~ census2020$library_true, census2020)</code></pre
 ##           0.1631977           0.2347418</code></pre>
 <p>The p value is over 0.05 and the confidence interval includes 0, meaning there is little to no correlation between the presence of libraries and Resisting Arrest charges.</p>
 </div>
+</div>
+</div>
+<div id="multivariate-regression--assignment-4" class="section level1">
+<h1>Multivariate Regression- Assignment 4:</h1>
+<div id="multivariate-calculations" class="section level2">
+<h2>Multivariate Calculations</h2>
+<pre class="r"><code>full_model &lt;- lm(census2020$num_arrests ~ census2020$allarrestssummer + census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true, census2020)
+
+summary(full_model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = census2020$num_arrests ~ census2020$allarrestssummer + 
+##     census2020$num_parks + census2020$pop + census2020$num_subway + 
+##     census2020$POPS_true + census2020$library_true, data = census2020)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.0505 -0.1418 -0.0637 -0.0367  8.2220 
+## 
+## Coefficients:
+##                               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                  7.482e-03  2.492e-02   0.300    0.764    
+## census2020$allarrestssummer  3.662e-03  3.309e-04  11.064   &lt;2e-16 ***
+## census2020$num_parks         5.852e-04  9.120e-04   0.642    0.521    
+## census2020$pop               7.738e-06  5.875e-06   1.317    0.188    
+## census2020$num_subway        8.350e-02  6.348e-03  13.153   &lt;2e-16 ***
+## census2020$POPS_trueTrue     2.013e-03  5.461e-02   0.037    0.971    
+## census2020$library_trueTrue -5.063e-03  4.068e-02  -0.124    0.901    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.5598 on 2320 degrees of freedom
+## Multiple R-squared:  0.1505, Adjusted R-squared:  0.1483 
+## F-statistic: 68.49 on 6 and 2320 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>full_model2 &lt;- lm(census2020$num_arrests ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true, census2020)
+
+summary(full_model2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = census2020$num_arrests ~ census2020$num_parks + 
+##     census2020$pop + census2020$num_subway + census2020$POPS_true + 
+##     census2020$library_true, data = census2020)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.1962 -0.1552 -0.0892 -0.0569  8.4304 
+## 
+## Coefficients:
+##                              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                 1.851e-02  2.554e-02   0.725  0.46864    
+## census2020$num_parks        9.427e-04  9.349e-04   1.008  0.31340    
+## census2020$pop              1.832e-05  5.946e-06   3.081  0.00209 ** 
+## census2020$num_subway       9.254e-02  6.458e-03  14.330  &lt; 2e-16 ***
+## census2020$POPS_trueTrue    1.094e-02  5.601e-02   0.195  0.84519    
+## census2020$library_trueTrue 5.892e-07  4.173e-02   0.000  0.99999    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.5743 on 2321 degrees of freedom
+## Multiple R-squared:  0.1057, Adjusted R-squared:  0.1037 
+## F-statistic: 54.84 on 5 and 2321 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div id="putting-in-new-variables-wifi-museums-historic-buildings" class="section level3">
+<h3>Putting in new variables (wifi, museums, historic buildings)</h3>
+<pre class="r"><code>full_model3 &lt;- lm(census2020$num_arrests ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true + census2020$num_wifi +  census2020$num_museum + census2020$num_historic,census2020)
+
+summary(full_model3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = census2020$num_arrests ~ census2020$num_parks + 
+##     census2020$pop + census2020$num_subway + census2020$POPS_true + 
+##     census2020$library_true + census2020$num_wifi + census2020$num_museum + 
+##     census2020$num_historic, data = census2020)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.3390 -0.1561 -0.0821 -0.0535  8.4472 
+## 
+## Coefficients:
+##                               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                  2.123e-02  2.555e-02   0.831   0.4061    
+## census2020$num_parks         7.974e-04  9.494e-04   0.840   0.4011    
+## census2020$pop               1.481e-05  6.047e-06   2.449   0.0144 *  
+## census2020$num_subway        8.623e-02  7.030e-03  12.266   &lt;2e-16 ***
+## census2020$POPS_trueTrue    -1.562e-02  5.900e-02  -0.265   0.7913    
+## census2020$library_trueTrue -9.766e-03  4.201e-02  -0.232   0.8162    
+## census2020$num_wifi          8.573e-03  4.460e-03   1.922   0.0547 .  
+## census2020$num_museum       -1.649e-02  4.022e-02  -0.410   0.6820    
+## census2020$num_historic      4.790e-04  1.955e-04   2.450   0.0143 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.5734 on 2318 degrees of freedom
+## Multiple R-squared:  0.1097, Adjusted R-squared:  0.1067 
+## F-statistic: 35.72 on 8 and 2318 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<div id="summary-of-analysis" class="section level2">
+<h2>Summary of Analysis</h2>
+<p>The greatest correlation with a p-value under .05 and a 95% confidence interval that does not include zero is between resisting arrest charges and another continuous variable is the presence of subway stations at .32. The more subway stations in a census tract, the more arrests for resisting arrest. Other continuous variables that showed correlation within 95% confidence are number of total arrests (the more total arrests, the more charges for resisting arrest) and total population (more population in a tract, more charges for resisting arrest). The presence of parks or libraries did not have significant correlation on the number of resisting arrest charges.</p>
+<p>For categorical variables, the presence of at least one POP showed correlation with a higher number of resisting arrest charges and the presence of at least one Library did not show correlation.</p>
+<p>The multivariate analysis shows that when controlling for all other variables, only the total number of arrests and number of subway stations in a census tract have an impact on the number of resisting arrest charges (because their p-values are less than .05). Subway stations, in our bivariate analysis, already had the strongest correlation and total number of arrests was close behind. However, the difference between one and two subway stations in a neighborhood is much bigger than the difference between one or two arrests, so understanding the context of the variables is important.</p>
+<p>Our R-Squared value for this regression is .15, suggesting that this model explains about 15% of Resisting Arrest charges in NYC in Summer 2020.</p>
+<p>However, when we run the multivariate analysis again without including the total arrests dataset (which includes the resisting arrests and thus will have a correlation) the number of POPS in a census tract also has a statistically significant relationship with the number of resisting arrest charges.</p>
+</div>
+</div>
+<div id="assignment-5---transformations" class="section level1">
+<h1>Assignment 5 - Transformations</h1>
+<div id="adding-an-arrest-per-capita-columns" class="section level2">
+<h2>Adding an arrest per capita columns</h2>
+<pre class="r"><code>census2020 &lt;- census2020 %&gt;%
+  mutate(arrest_percapita = as.numeric(num_arrests/pop))
+
+census2020 &lt;- census2020 %&gt;%
+  mutate(totalarrest_percapita = as.numeric(allarrestssummer/pop))</code></pre>
+</div>
+<div id="centering-the-data" class="section level2">
+<h2>Centering the Data</h2>
+<pre class="r"><code>centered_data &lt;- census2020 %&gt;%
+  mutate(num_subway = num_subway - mean(num_subway, na.rm=TRUE),
+         pop = pop - mean(pop , na.rm=TRUE), 
+         num_historic  = num_historic - mean(num_historic, na.rm=TRUE))
+
+
+centered_model &lt;- lm(census2020$num_arrests~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$POPS_true + census2020$num_wifi + census2020$num_museum , centered_data)
+
+export_summs(full_model3, centered_model, 
+             error_format = &quot;(p = {p.value})&quot;,
+             error_pos = &quot;same&quot;,
+             model.names = c(&quot;Initial&quot;, &quot;Centered&quot;))</code></pre>
+<table class="huxtable" style="border-collapse: collapse; border: 0px; margin-bottom: 2em; margin-top: 2em; ; margin-left: auto; margin-right: auto;  " id="tab:unnamed-chunk-43">
+<col><col><col><tr>
+<th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Initial</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Centered</th></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(Intercept)</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.02 (p = 0.41)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.02 (p = 0.41)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_parks</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 (p = 0.40)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 (p = 0.40)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$pop</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_subway</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09 *** (p = 0.00)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09 *** (p = 0.00)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$POPS_trueTrue</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.79)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.80)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$library_trueTrue</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.01 (p = 0.82)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> &nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_wifi</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01 (p = 0.05)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01 (p = 0.06)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_museum</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.68)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.68)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_historic</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">N</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2327&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2327&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">R2</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.11&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.11&nbsp;</td></tr>
+<tr>
+<th colspan="3" style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> *** p &lt; 0.001;  ** p &lt; 0.01;  * p &lt; 0.05.</th></tr>
+</table>
+
+</div>
+<div id="scaling-the-population-wifi-and-historic-buildings" class="section level2">
+<h2>Scaling the population , wifi, and historic buildings</h2>
+<pre class="r"><code>data_scaled &lt;- census2020 %&gt;%
+  mutate(pop = pop / 1000, num_wifi = num_wifi/10, num_historic = num_historic/100)
+
+centered_scaled &lt;-centered_data %&gt;%
+  mutate(pop = pop / 1000, num_wifi = num_wifi/10, num_historic = num_historic/100)
+  
+model_scaled &lt;- lm(census2020$num_arrests~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum + census2020$POPS_true , data_scaled)
+
+modelcentered_scaled &lt;- lm(census2020$num_arrests~ census2020$num_parks + census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum + census2020$POPS_true, centered_scaled)
+
+export_summs(full_model3, centered_model, model_scaled, modelcentered_scaled,
+             error_format = &quot;(p = {p.value})&quot;,
+             error_pos = &quot;same&quot;,
+             model.names = c(&quot;Initial&quot;, 
+                             &quot;Centered&quot;, 
+                             &quot;Initial Scaled&quot;, 
+                             &quot;Centered Scaled&quot;))</code></pre>
+<table class="huxtable" style="border-collapse: collapse; border: 0px; margin-bottom: 2em; margin-top: 2em; ; margin-left: auto; margin-right: auto;  " id="tab:unnamed-chunk-44">
+<col><col><col><col><col><tr>
+<th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Initial</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Centered</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Initial Scaled</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Centered Scaled</th></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(Intercept)</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.02 (p = 0.41)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.02 (p = 0.41)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.02 (p = 0.41)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.02 (p = 0.41)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_parks</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 (p = 0.40)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 (p = 0.40)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 (p = 0.40)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 (p = 0.40)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$pop</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_subway</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09 *** (p = 0.00)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09 *** (p = 0.00)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09 *** (p = 0.00)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09 *** (p = 0.00)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$POPS_trueTrue</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.79)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.80)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.80)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.80)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$library_trueTrue</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.01 (p = 0.82)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> &nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> &nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> &nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_wifi</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01 (p = 0.05)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01 (p = 0.06)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01 (p = 0.06)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01 (p = 0.06)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_museum</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.68)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.68)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.68)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.68)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_historic</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">N</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2327&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2327&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2327&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2327&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">R2</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.11&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.11&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.11&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.11&nbsp;</td></tr>
+<tr>
+<th colspan="5" style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> *** p &lt; 0.001;  ** p &lt; 0.01;  * p &lt; 0.05.</th></tr>
+</table>
+
+</div>
+<div id="comparing-arrests-overall" class="section level2">
+<h2>Comparing Arrests Overall</h2>
+<pre class="r"><code>total_model &lt;- lm(census2020$allarrestssummer ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true + census2020$num_wifi +  census2020$num_museum + census2020$num_historic,census2020)
+
+total_centered_model &lt;- lm(census2020$allarrestssummer ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + census2020$POPS_true, centered_data)
+
+total_model_scaled &lt;- lm(census2020$allarrestssummer ~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , data_scaled)
+
+totalmodelcentered_scaled &lt;- lm(census2020$allarrestssummer ~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , centered_scaled)
+
+export_summs(total_model, total_centered_model, total_model_scaled, totalmodelcentered_scaled,
+             error_format = &quot;(p = {p.value})&quot;,
+             error_pos = &quot;same&quot;,
+             model.names = c(&quot;ALL ARRESTS \nInitial&quot;, 
+                             &quot;ALL ARRESTS \nCentered&quot;, 
+                             &quot;ALL ARRESTS \nInitial Scaled&quot;, 
+                             &quot;ALL ARRESTS \nCentered Scaled&quot;))</code></pre>
+<table class="huxtable" style="border-collapse: collapse; border: 0px; margin-bottom: 2em; margin-top: 2em; ; margin-left: auto; margin-right: auto;  " id="tab:unnamed-chunk-45">
+<col><col><col><col><col><tr>
+<th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">ALL ARRESTS <br>Initial</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">ALL ARRESTS <br>Centered</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">ALL ARRESTS <br>Initial Scaled</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">ALL ARRESTS <br>Centered Scaled</th></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(Intercept)</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">3.21 * (p = 0.04)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">3.23 * (p = 0.04)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">3.21 * (p = 0.04)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">3.21 * (p = 0.04)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_parks</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09 (p = 0.14)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09 (p = 0.14)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09 (p = 0.14)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09 (p = 0.14)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$pop</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 *** (p = 0.00)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 *** (p = 0.00)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 *** (p = 0.00)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 *** (p = 0.00)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_subway</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2.15 *** (p = 0.00)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2.15 *** (p = 0.00)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2.16 *** (p = 0.00)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2.16 *** (p = 0.00)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$POPS_trueTrue</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.68 (p = 0.85)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.64 (p = 0.86)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> &nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> &nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$library_trueTrue</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.75 (p = 0.77)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> &nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> &nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> &nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_wifi</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.58 * (p = 0.03)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.59 * (p = 0.03)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.60 * (p = 0.02)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.60 * (p = 0.02)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_museum</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-1.13 (p = 0.65)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-1.10 (p = 0.65)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-1.03 (p = 0.67)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-1.03 (p = 0.67)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_historic</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01 (p = 0.66)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01 (p = 0.67)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01 (p = 0.67)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01 (p = 0.67)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">N</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2327&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2327&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2327&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2327&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">R2</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.06&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.06&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.06&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.06&nbsp;</td></tr>
+<tr>
+<th colspan="5" style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> *** p &lt; 0.001;  ** p &lt; 0.01;  * p &lt; 0.05.</th></tr>
+</table>
+
+</div>
+<div id="interpreting-the-data" class="section level2">
+<h2>Interpreting the Data</h2>
+<p>The p values are only significant for subway, pop, and historic.</p>
+<p>If the number of subway stops goes up by one then the number of resisting arrests goes up by 9%. For every 10 wifi spots there are 1% more arrests for resisting arrest.</p>
+<p>Our various transformations did not change the data, but it did make the finding about the wifi spots more significant when they were scaled. Even trying the transformation analysis with total number of arrests did not create any large changes.</p>
+<p>The transformations that we tried were first means centering subway, population, and historic districts. Second, we tried scaling population to steps of 1,000 and wi-fi by steps of ten and historic districts by steps of 100. Third, we tried a combination of these transformations (means centered AND scaled). In all three analyses the outputs remained almost identical. One reason for the lack of change could be that many census tracts have an average number of subway stations, population (which makes sense because the Census Bureau tries to standardize this), and historic buildings. While this does make sense for population, it makes less sense for subway stations and historic districts which do seem to really vary.The impact of the independent variables on the dependent variable is pretty small so it is hard to see differences with only two decimal places. We tried out modifying the arrests to be per capita, with the plan to scale this up by 1000 and see if making the numbers larger allowed us to see more variation. However, we ran into an issue because the new column created NA values which then made the regression models not work.</p>
+</div>
+</div>
+<div id="assignment-6-interactions" class="section level1">
+<h1>Assignment 6: Interactions</h1>
+<pre class="r"><code>coeff_names_interaction &lt;- c(&quot;Constant&quot; = &quot;(Intercept)&quot;,
+                 &quot;Number of Wifi Spots&quot; = &quot;census2020$num_wifi&quot;,
+                 &quot;Number of Historic Sites&quot; = &quot;census2020$num_historic&quot;,
+                 &quot;Number of Parks&quot; = &quot;census2020$num_parks&quot;,
+                 &quot;Number of Subways&quot; = &quot;census2020$num_subway&quot;,
+                 &quot;Number of Museums&quot; = &quot;census2020$num_museum&quot;, 
+                 &quot;Resisting Arrests Charges&quot; = &quot;census2020$num_arrests&quot;,
+                 &quot;Population in 2020&quot; = &quot;census2020$pop&quot;, 
+                 &quot;Has a POPS&quot; = &quot;census2020$POPS_trueTrue&quot;)
+                   
+                   
+interaction_model &lt;- lm(census2020$num_arrests ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + census2020$POPS_true + census2020$num_subway*census2020$POPS_true,  centered_data)
+
+export_summs(centered_model, interaction_model,
+             error_format = &quot;(p = {p.value})&quot;,
+             error_pos = &quot;same&quot;,
+             model.names = c(&quot;Centered Data&quot;,
+                             &quot;Centered Data with Interactions&quot;))</code></pre>
+<table class="huxtable" style="border-collapse: collapse; border: 0px; margin-bottom: 2em; margin-top: 2em; ; margin-left: auto; margin-right: auto;  " id="tab:unnamed-chunk-46">
+<col><col><col><tr>
+<th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"></th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Centered Data</th><th style="vertical-align: top; text-align: center; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">Centered Data with Interactions</th></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">(Intercept)</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.02 (p = 0.41)</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.02 (p = 0.33)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_subway</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.09 *** (p = 0.00)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.05 *** (p = 0.00)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$pop</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 ** (p = 0.00)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_parks</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 (p = 0.40)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 (p = 0.22)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_historic</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 * (p = 0.01)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.00 ** (p = 0.00)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$POPS_trueTrue</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.80)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.18 ** (p = 0.01)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_wifi</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01 (p = 0.06)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.01 (p = 0.06)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_museum</th><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.68)</td><td style="vertical-align: top; text-align: right; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">-0.02 (p = 0.61)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">census2020$num_subway:census2020$POPS_trueTrue</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> &nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.07 *** (p = 0.00)</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; padding: 6pt 6pt 6pt 6pt; font-weight: normal;">N</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2327&nbsp;&nbsp;&nbsp;&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0.4pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">2327&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr>
+<th style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">R2</th><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.11&nbsp;</td><td style="vertical-align: top; text-align: right; white-space: normal; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;">0.12&nbsp;</td></tr>
+<tr>
+<th colspan="3" style="vertical-align: top; text-align: left; white-space: normal; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt;    padding: 6pt 6pt 6pt 6pt; font-weight: normal;"> *** p &lt; 0.001;  ** p &lt; 0.01;  * p &lt; 0.05.</th></tr>
+</table>
+
+<div id="explanation" class="section level2">
+<h2>Explanation</h2>
+<p>The interaction model shows that the effect that the number of subway stations had on resisting arrest charges in New York in Summer 2020 differed between census tracts that had POPS (Privately Owned Public Spaces) and ones that did not. In census tracts with POPS, the coefficient for subway stations is slightly larger, meaning that subway stations have a larger impact on resisting arrest charges in tracts with at least one POPS. The effects of subway stops on resisting arrest charges remain significant for both tracts with and tracts without POPS.</p>
 </div>
 </div>
 <div id="references" class="section level1">

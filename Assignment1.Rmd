@@ -62,6 +62,9 @@ library(units)
 library(nngeo)
 library(geosphere)
 library(gridExtra)
+library(jtools)
+library(huxtable)
+library(interactions)
 ```
 
 
@@ -78,6 +81,9 @@ POPs <-st_read("https://data.cityofnewyork.us/resource/rvih-nhyn.geojson")
 libr <-st_read("data/Library.geojson")
 parks <-st_read("data/Parks.geojson")
 subway<-st_read("data/Subway.geojson")
+historic <-st_read("data/HistoricBuildings.geojson")
+museum <-st_read("data/Museums.geojson")
+wifi <-st_read("data/WifiHotspot.geojson")
 ```
 
 * Bringing in Census Data
@@ -119,6 +125,15 @@ parks <-parks %>%
 
 subway <-subway %>%
    st_transform(NY_state_plane)
+
+historic <-historic %>%
+   st_transform(NY_state_plane)
+
+museum <-museum %>%
+   st_transform(NY_state_plane)
+
+wifi <-wifi %>%
+   st_transform(NY_state_plane)
 ```
 * Aggregating the data to census tracts
 ```{r}
@@ -139,6 +154,15 @@ census2020 <- census2020 %>%
 
 census2020 <- census2020 %>%
   mutate(num_subway = lengths(st_covers(census2020, subway)))
+
+census2020 <- census2020 %>%
+  mutate(num_historic = lengths(st_covers(census2020, historic)))
+
+census2020 <- census2020 %>%
+  mutate(num_museum = lengths(st_covers(census2020, museum)))
+
+census2020 <- census2020 %>%
+  mutate(num_wifi = lengths(st_covers(census2020, wifi)))
 
 ```
 
@@ -345,7 +369,7 @@ Our dependent variable is the number of arrests made per census tract in New Yor
 cor.test(~ census2020$num_arrests + census2020$allarrestssummer, census2020 = census2020)
 ```
 
-Tracts with a higher number of arrests overall are associated with a higher number of arrests for resisting arrest.
+Tracts with a higher number of arrests overall are associated with a higher number of arrests for resisting arrest. The correlation is .27 (and the 95% confidence interval does not cover 0 + p-value is less than .05)
 
 ### Population
 
@@ -361,23 +385,40 @@ The magnitude of the relationship is a correlation of .1 and the significance is
 ```{r}
 cor.test(~ census2020$num_arrests + census2020$num_parks, census2020 = census2020)
 ```
-Tracts with a higher numbers of parks are associated with a higher number of arrests for resisting arrest.
+Tracts with a higher numbers of parks are associated with a higher number of arrests for resisting arrest--however the confidence interval includes 0, which means the correlation is not proven.
 
 ### Number of Subway Stations
 
 ```{r}
 cor.test(~ census2020$num_arrests + census2020$num_subway, census2020 = census2020)
 ```
-Tracts with a higher numbers of subways stations are associated with a higher number of arrests for resisting arrest.
+Tracts with a higher numbers of subways stations are associated with a higher number of arrests for resisting arrest. The correlation is .32 (and the confidence interval/p-value allow for confidence in this correlation.)
 
 ### Number of Libraries
 
 ```{r}
 cor.test(~ census2020$num_arrests + census2020$num_library, census2020 = census2020)
 ```
-Tracts with a higher numbers of libraries are associated with a higher number of arrests for resisting arrest.
+Tracts with a higher numbers of libraries are associated with a higher number of arrests for resisting arrest. However, the p-value and confidence interval show that this correlation is not proven.
 
 
+### Number of Wifi Hotspots
+
+```{r}
+cor.test(~ census2020$num_arrests + census2020$num_wifi, census2020 = census2020)
+```
+
+### Number of Museums
+
+```{r}
+cor.test(~ census2020$num_arrests + census2020$num_museum, census2020 = census2020)
+```
+
+### Number of Historic Buildings
+
+```{r}
+cor.test(~ census2020$num_arrests + census2020$num_historic, census2020 = census2020)
+```
 
 
 ## Difference in means (Categorical Variables)
@@ -419,6 +460,163 @@ t.test(census2020$num_arrests ~ census2020$library_true, census2020)
 ```
 The p value is over 0.05 and the confidence interval includes 0, meaning there is little to no correlation between the presence of libraries and Resisting Arrest charges. 
 
+
+# Multivariate Regression- Assignment 4:
+
+
+## Multivariate Calculations
+
+```{r}
+full_model <- lm(census2020$num_arrests ~ census2020$allarrestssummer + census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true, census2020)
+
+summary(full_model)
+```
+
+```{r}
+full_model2 <- lm(census2020$num_arrests ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true, census2020)
+
+summary(full_model2)
+```
+
+### Putting in new variables (wifi, museums, historic buildings)
+```{r}
+full_model3 <- lm(census2020$num_arrests ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true + census2020$num_wifi +  census2020$num_museum + census2020$num_historic,census2020)
+
+summary(full_model3)
+```
+
+
+## Summary of Analysis
+
+The greatest correlation with a p-value under .05 and a 95% confidence interval that does not include zero is between resisting arrest charges and another continuous variable is the presence of subway stations at .32. The more subway stations in a census tract, the more arrests for resisting arrest. Other continuous variables that showed correlation within 95% confidence are number of total arrests (the more total arrests, the more charges for resisting arrest) and total population (more population in a tract, more charges for resisting arrest). The presence of parks or libraries did not have significant correlation on the number of resisting arrest charges.
+
+For categorical variables, the presence of at least one POP showed correlation with a higher number of resisting arrest charges and the presence of at least one Library did not show correlation.
+
+The multivariate analysis shows that when controlling for all other variables, only the total number of arrests and number of subway stations in a census tract have an impact on the number of resisting arrest charges (because their p-values are less than .05). Subway stations, in our bivariate analysis, already had the strongest correlation and total number of arrests was close behind. However, the difference between one and two subway stations in a neighborhood is much bigger than the difference between one or two arrests, so understanding the context of the variables is important. 
+
+Our R-Squared value for this regression is .15, suggesting that this model explains about 15% of Resisting Arrest charges in NYC in Summer 2020.
+
+However, when we run the multivariate analysis again without including the total arrests dataset (which includes the resisting arrests and thus will have a correlation) the number of POPS in a census tract also has a statistically significant relationship with the number of resisting arrest charges.
+
+
+# Assignment 5 - Transformations
+
+## Adding an arrest per capita columns
+
+```{r}
+
+census2020 <- census2020 %>%
+  mutate(arrest_percapita = as.numeric(num_arrests/pop))
+
+census2020 <- census2020 %>%
+  mutate(totalarrest_percapita = as.numeric(allarrestssummer/pop))
+
+```
+
+
+## Centering the Data
+
+```{r}
+centered_data <- census2020 %>%
+  mutate(num_subway = num_subway - mean(num_subway, na.rm=TRUE),
+         pop = pop - mean(pop , na.rm=TRUE), 
+         num_historic  = num_historic - mean(num_historic, na.rm=TRUE))
+
+
+centered_model <- lm(census2020$num_arrests~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$POPS_true + census2020$num_wifi + census2020$num_museum , centered_data)
+
+export_summs(full_model3, centered_model, 
+             error_format = "(p = {p.value})",
+             error_pos = "same",
+             model.names = c("Initial", "Centered"))
+```
+
+## Scaling the population , wifi, and historic buildings
+
+```{r}
+data_scaled <- census2020 %>%
+  mutate(pop = pop / 1000, num_wifi = num_wifi/10, num_historic = num_historic/100)
+
+centered_scaled <-centered_data %>%
+  mutate(pop = pop / 1000, num_wifi = num_wifi/10, num_historic = num_historic/100)
+  
+model_scaled <- lm(census2020$num_arrests~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum + census2020$POPS_true , data_scaled)
+
+modelcentered_scaled <- lm(census2020$num_arrests~ census2020$num_parks + census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum + census2020$POPS_true, centered_scaled)
+
+export_summs(full_model3, centered_model, model_scaled, modelcentered_scaled,
+             error_format = "(p = {p.value})",
+             error_pos = "same",
+             model.names = c("Initial", 
+                             "Centered", 
+                             "Initial Scaled", 
+                             "Centered Scaled"))
+```
+
+## Comparing Arrests Overall
+
+
+```{r}
+
+total_model <- lm(census2020$allarrestssummer ~ census2020$num_parks + census2020$pop + census2020$num_subway + census2020$POPS_true + census2020$library_true + census2020$num_wifi +  census2020$num_museum + census2020$num_historic,census2020)
+
+total_centered_model <- lm(census2020$allarrestssummer ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + census2020$POPS_true, centered_data)
+
+total_model_scaled <- lm(census2020$allarrestssummer ~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , data_scaled)
+
+totalmodelcentered_scaled <- lm(census2020$allarrestssummer ~ census2020$num_parks+ census2020$num_subway + census2020$pop + census2020$num_historic + census2020$num_wifi  + census2020$num_museum  , centered_scaled)
+
+export_summs(total_model, total_centered_model, total_model_scaled, totalmodelcentered_scaled,
+             error_format = "(p = {p.value})",
+             error_pos = "same",
+             model.names = c("ALL ARRESTS \nInitial", 
+                             "ALL ARRESTS \nCentered", 
+                             "ALL ARRESTS \nInitial Scaled", 
+                             "ALL ARRESTS \nCentered Scaled"))
+
+```
+
+
+
+## Interpreting the Data
+The p values are only significant for subway, pop, and historic. 
+
+If the number of subway stops goes up by one then the number of resisting arrests goes up by 9%.
+For every 10 wifi spots there are 1% more arrests for resisting arrest. 
+
+Our various transformations did not change the data, but it did make the finding about the wifi spots more significant when they were scaled. Even trying the transformation analysis with total number of arrests did not create any large changes. 
+
+The transformations that we tried were first means centering subway, population, and historic districts. Second, we tried scaling population to steps of 1,000 and wi-fi by steps of ten and historic districts by steps of 100. Third, we tried a combination of these transformations (means centered AND scaled). In all three analyses the outputs remained almost identical. One reason for the lack of change could be that many census tracts have an average number of subway stations, population (which makes sense because the Census Bureau tries to standardize this), and historic buildings. While this does make sense for population, it makes less sense for subway stations and historic districts which do seem to really vary.The impact of the independent variables on the dependent variable is pretty small so it is hard to see differences with only two decimal places. We tried out modifying the arrests to be per capita, with the plan to scale this up by 1000 and see if making the numbers larger allowed us to see more variation. However, we ran into an issue because the new column created NA values which then made the regression models not work. 
+
+# Assignment 6: Interactions
+
+```{r}
+coeff_names_interaction <- c("Constant" = "(Intercept)",
+                 "Number of Wifi Spots" = "census2020$num_wifi",
+                 "Number of Historic Sites" = "census2020$num_historic",
+                 "Number of Parks" = "census2020$num_parks",
+                 "Number of Subways" = "census2020$num_subway",
+                 "Number of Museums" = "census2020$num_museum", 
+                 "Resisting Arrests Charges" = "census2020$num_arrests",
+                 "Population in 2020" = "census2020$pop", 
+                 "Has a POPS" = "census2020$POPS_trueTrue")
+                   
+                   
+interaction_model <- lm(census2020$num_arrests ~ census2020$num_subway + census2020$pop + census2020$num_parks + census2020$num_historic + census2020$num_wifi + census2020$num_museum + census2020$POPS_true + census2020$num_subway*census2020$POPS_true,  centered_data)
+
+export_summs(centered_model, interaction_model,
+             error_format = "(p = {p.value})",
+             error_pos = "same",
+             model.names = c("Centered Data",
+                             "Centered Data with Interactions"))
+            
+            
+```
+
+
+## Explanation
+
+The interaction model shows that the effect that the number of subway stations had on resisting arrest charges in New York in Summer 2020 differed between census tracts that had POPS (Privately Owned Public Spaces) and ones that did not. In census tracts with POPS, the coefficient for subway stations is slightly larger, meaning that subway stations have a larger impact on resisting arrest charges in tracts with at least one POPS. The effects of subway stops on resisting arrest charges remain significant for both tracts with and tracts without POPS.
 
 
 # References
