@@ -8,20 +8,12 @@ output:
      toc: true
      toc_depth: 3
      toc_float: true
+     code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-# ASSIGNMENT INSTRUCTIONS
-Introduction: Define your research question and explain why it is important. Describe the hypothesis that you are testing.
-Background: Summarize research that others have done to address your research question (or related questions).
-Data: Describe the dataset you are using to answer your research question.
-Methods: Describe the statistical tests you used to answer your research question. Describe what result would be required to confirm the hypothesis you are testing.
-Results: Present the results of the statistical test you conducted and interpret those results.
-Discussion: Explain how your results do or do not support the hypothesis you identified in the introduction. Describe any limitations or weaknesses in your analysis. Propose an analysis or experiment that could address those weaknesses.
-Conclusion: Explain why your analysis matters and why someone should care about it.
 
 # Introduction and  Research question
 
@@ -209,7 +201,7 @@ t.test(census2020$num_arrests ~ census2020$POPS_true, census2020)
 
 This introductory chart breaks down Resisting Arrest Charges by Borough, showing that the largest percentages were in Manhattan and Brooklyn with the Bronx and Queens following close behind. This is consistent with media coverage of protest activity in New York for summer 2020 centering around Manhattan and Brooklyn and suggests that Resisting Arrests is a helpful proxy for protest activity. Error bars on the chart represent 95% confidence interval.
 
-```{r, include = FALSE}
+```{r, include= FALSE}
 
 pct_Queens<- t.test(arrestdata$arrest_boro == "Q")
 pct_Brooklyn <-t.test(arrestdata$arrest_boro == "K")
@@ -260,6 +252,47 @@ ggplot(PCT_summary_arrests) +
 
 
 ```
+
+
+## Map of Resisting Arrest Charges (Summer 2020)
+
+```{r}
+
+ggplot(census2020) +
+  geom_sf(color = NA, 
+          aes(fill = num_arrests)) +
+  scale_fill_viridis_c(option = "C", name = "New York Census Tracts by Number of Resisting Arrest Charges",
+                       breaks = breaks <- seq(0, 10, by = 1),
+                       labels = paste(prettyNum(breaks, big.mark = ","),
+                                      "Resisting Arrest Charges")) +
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr",
+                         style = north_arrow_minimal()) +
+theme_map() +
+  theme(legend.background = element_rect(fill = alpha("white", 0.5), 
+                                         color = "gray"))
+
+```
+
+## Map of All Arrests (Summer 2020)
+
+```{r}
+ggplot(census2020) +
+  geom_sf(color = NA, 
+          aes(fill = allarrestssummer)) +
+  scale_fill_viridis_c(option = "C", name = "New York Census Tracts by Number of Resisting Arrest Charges",
+                       breaks = breaks <- seq(0, 500, by = 50),
+                       labels = paste(prettyNum(breaks, big.mark = ","),
+                                      "Resisting Arrest Charges")) +
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr",
+                         style = north_arrow_minimal()) +
+theme_map() +
+  theme(legend.background = element_rect(fill = alpha("white", 0.5), 
+                                         color = "gray"))
+```
+
+
 ## Multivariate Regression
 
 This model shows the impact that each variable had on the number of resisting arrest charges while holding all other variables constant. While we did try a number of scaling and centering transformations on this regression, none ultimately made a large difference in the output and the model fit remained similar between versions as well. 
@@ -280,6 +313,8 @@ effect_plot(full_model3, pred = num_subway, interval = TRUE) +
                      breaks = breaks <- seq(0, 30, by = 5),
                      labels = prettyNum(breaks, big.mark = ","))
 ```
+
+
 ```{r}
 effect_plot(full_model3, pred = pop, interval = TRUE) +
   scale_y_continuous(name = "Resisting Arrest Charges per Census Tract") +
@@ -287,6 +322,8 @@ effect_plot(full_model3, pred = pop, interval = TRUE) +
                      breaks = breaks <- seq(0, 20000, by = 5000),
                      labels = prettyNum(breaks, big.mark = ","))
 ```
+
+
 ```{r}
 effect_plot(full_model3, pred = num_historic, interval = TRUE) +
   scale_y_continuous(name = "Resisting Arrest Charges per Census Tract") +
@@ -329,6 +366,9 @@ export_summs(full_model3, interaction_model,
             
 ```
 
+
+
+
 ```{r}
 interact_plot(interaction_model, pred = num_subway, modx = POPS_true,
               interval = TRUE) +
@@ -338,7 +378,7 @@ interact_plot(interaction_model, pred = num_subway, modx = POPS_true,
   scale_y_continuous(name = "Resisting Arrest Charges Per Census Tract")
 ```
 
-#Discussion
+# Discussion
 
 Ultimately, our hypothesis that parks would have a significant positive correlation to the number of protest arrests was incorrect, although we did find significant positive correlations with other urban amnenities. 
 
@@ -351,7 +391,7 @@ The multivariate analysis shows that when controlling for all other variables, t
 Our R-Squared value for this regression is .11, suggesting that this model explains about 11% of Resisting Arrest charges in NYC in Summer 2020.
 
 
-#Conclusion
+# Conclusion
 
 While the presence of parks did not significantly alter the number of protest related arrests, the number of subway stations, overall population, historic buildings, POPs, and Wifi hot spots did have an effect. 
 
