@@ -43,7 +43,7 @@ Continuous
 * NYC Arrests for Summer 2020 for "Resisting Arrest"
 * All NYC Arrests in Summer 2020
 * Number of Parks 
-* Number of POPS
+* Number of POPS (privately owned public spaces)
 * Number of Subway Stations
 * Number of Museums
 * Number of Historic Buildings (designated by the Landmarks Preservation Commission)
