@@ -1,5 +1,5 @@
 ---
-title: "Final Project"
+title: "Protest Arrests and Public Amenities, Summer 2020 New York City"
 author: "Madeleine Levin, Jaida Nabayan, Michael Zajakowski Uhll"
 date: "11/30/2021"
 output:
@@ -25,9 +25,7 @@ Conclusion: Explain why your analysis matters and why someone should care about 
 
 # Introduction and  Research question
 
-Introduction: Define your research question and explain why it is important. Describe the hypothesis that you are testing.
-
-What is the relationship between the presence of open space and other amenities in NYC neighborhoods and the number of people arrested during protests against police brutality in summer 2020? 
+We were initially interested in the relationships between social movements and the built environment. We decided to examine the Summer 2020 racial justice protests in New York City, as we had personal experience and memories of these protests. Protests are spatially facilitated and bounded, and we wanted to determine the exact elements of urban space that constitute this facilitation or discouragement. The most obvious seemed to be parks - they provide ample open space for large groups to organize and gather. Our question became "What is the relationship between the presence of open space and other amenities in NYC neighborhoods and the number of people arrested during protests against police brutality in summer 2020?" We hypothesized that the presence of parks would increase the number of protest related arrests, as large groups of people would be gathering in parks during the protests and thus be more likely to be arrested at the protest. We also decided to incorporate other urban space/amenity variables to inform a broader analysis of urban space and social movements. 
 
 # Background 
 While there is not a lot of quantitative research exploring the relationship between open space and protest in summer 2020, Rafail (2018) found that in NYC protests between 1960 and 2006, "the built environment, and the social relationships creating it, powerfully influence where dissent occurs." Rafail finds that Privately Owned Public Spaces (POPs) are increasingly sites of gathering and protest, reflecting decentralization of public gathering spaces.Looking at the protests following George Floyd's death in 2020, The US Crisis Monitor collected data on the political demonstrations that took place during from May - August 2020, with substantial focus on Black Lives Matter (BLM) protests throughout the United States. Their maps show the spatial concentration of protests in urban centers and that the majority of gatherings were protests and not riots (though they do not provide a clear definition explaining the difference between a riot and protest).
@@ -64,13 +62,10 @@ Arrest Description Used as Proxy for Protest Arrests:
 
 # Methods
 
+We used a multivariate regression to show the effect of each variable on the number of resisting arrest charges in that census tract. We then graphed the variables with the most significant correlation to give a visual representation of our findings and facilitate quicker analysis. 
 
 # Results
 
-Present the results of the statistical test you conducted and interpret those results.
-
-
-## Load data
 
 ```{r, include=FALSE}
 library(tidyverse)
@@ -345,12 +340,11 @@ interact_plot(interaction_model, pred = num_subway, modx = POPS_true,
 
 #Discussion
 
-Explain how your results do or do not support the hypothesis you identified in the introduction. Describe any limitations or weaknesses in your analysis. Propose an analysis or experiment that could address those weaknesses.
+Ultimately, our hypothesis that parks would have a significant positive correlation to the number of protest arrests was incorrect, although we did find significant positive correlations with other urban amnenities. 
 
 ## Multivariate Regression Discussion
 
 The greatest correlation with a p-value under .05 and a 95% confidence interval that does not include zero is between resisting arrest charges and another continuous variable is the presence of subway stations at .32. The more subway stations in a census tract, the more arrests for resisting arrest. Other continuous variables that showed correlation within 95% confidence are number of total arrests (the more total arrests, the more charges for resisting arrest) and total population (more population in a tract, more charges for resisting arrest). The presence of parks or libraries did not have significant correlation on the number of resisting arrest charges.
-
 
 The multivariate analysis shows that when controlling for all other variables, the population, number of subway stations, number of historic buildings, and number of wifi locations in a census tract have an impact on the number of resisting arrest charges (because their p-values are less than .05). Subway stations, in our bivariate analysis, already had the strongest correlation. Here they have a 9% positive relationship on the number of resisting arrest charges (meaning that arrest charges go up 9% with every additional subway stop in a tract). The impact of population and historic buildings is so small that it is less than 1% and wi-fi locations is a positive relationship of 1%. However, the difference between one and two subway stations in a neighborhood is much bigger than the difference between one or two people, so understanding the context of the variables is important. 
 
@@ -359,7 +353,15 @@ Our R-Squared value for this regression is .11, suggesting that this model expla
 
 #Conclusion
 
-Explain why your analysis matters and why someone should care about it.
+While the presence of parks did not significantly alter the number of protest related arrests, the number of subway stations, overall population, historic buildings, POPs, and Wifi hot spots did have an effect. 
+
+We have a number of theories about our results. We may have overestimated the importance of parks in protest movements: as parks are always publicly accessible, they may not have as much of an insurrectionist character as gathering in a street or government building, and many protests seek to make their point by "laying claim" to spaces from which they are usually excluded. 
+
+The correlation between protest arrests and subway stations infers that perhaps what is most important to social movements is accessibility to and from other areas of the region, as people often travel to other neighborhoods to take part in protests. 
+
+The correlation between historic buildings and protest arrests infers that a) the majority of protests took place in Brooklyn and Manhattan which have a higher percentage of historic buildings than the other boroughs and b) that historic buildings, such as municipal buildings, have a monumental character that makes them attractive to symbolic expressions of social movement power. 
+
+POPs and Wifi hot spots imply a connective correlation with protest arrests: Wifi spots allow people to communicate if they do not have cell phone service (as is often the case in crowded protests), and POPs can serve as a meeting point. Both facilitate meeting areas that could potentially lead to disruption and arrests. 
 
 # References
 
